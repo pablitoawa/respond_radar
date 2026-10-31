@@ -1,0 +1,3239 @@
+/* RespondRadar - Injected UI Styles */
+
+#respond-radar-widget {
+  position: fixed;
+  top: 12px;
+  right: 60px;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  user-select: none;
+}
+
+.radar-logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: #38bdf8;
+  gap: 5px;
+  letter-spacing: 0.2px;
+}
+
+.radar-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #22c55e;
+  animation: radar-pulse 1.8s infinite;
+}
+
+.radar-pulse-dot.offline {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: radar-pulse-red 1.8s infinite;
+}
+
+@keyframes radar-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes radar-pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.radar-bridge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 2px;
+  transition: all 0.3s ease;
+}
+
+.radar-bridge-dot.online {
+  background-color: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.8);
+}
+
+.radar-bridge-dot.offline {
+  background-color: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+}
+
+.radar-bridge-indicator {
+  font-size: 11px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 2px;
+  cursor: help;
+}
+
+.radar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.radar-btn-add {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+}
+
+.radar-btn-add:hover {
+  background: linear-gradient(135deg, #0369a1, #075985);
+  transform: scale(1.03);
+}
+
+/* In-Page Minimalist Pill & Overflow Menu */
+.radar-inpage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f172a;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #24304f;
+  border-radius: 9999px;
+  padding: 3px 8px 3px 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 10px rgba(56, 189, 248, 0.15);
+  font-size: 12px;
+  color: #f8fafc;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.radar-inpage-pill:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), 0 0 16px rgba(14, 165, 233, 0.25);
+}
+
+.radar-inpage-pill.watched {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.radar-inpage-pill.team-danny { border-color: rgba(56, 189, 248, 0.5); }
+.radar-inpage-pill.team-pz { border-color: rgba(192, 132, 252, 0.5); }
+.radar-inpage-pill.team-diego { border-color: rgba(249, 115, 22, 0.5); }
+.radar-inpage-pill.team-aracely { border-color: rgba(244, 63, 94, 0.5); }
+.radar-inpage-pill.team-dylan { border-color: rgba(16, 185, 129, 0.5); }
+.radar-inpage-pill.team-juan { border-color: rgba(6, 182, 212, 0.5); }
+.radar-inpage-pill.team-yuquita { border-color: rgba(234, 179, 8, 0.5); }
+.radar-inpage-pill.team-pending { border-color: rgba(245, 158, 11, 0.5); }
+.radar-inpage-pill.is-sold { border-color: rgba(234, 179, 8, 0.7); }
+
+.radar-lead-chip,
+.radar-lead-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #f1f5f9;
+  max-width: 170px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.radar-lead-chip-btn:hover {
+  color: #fff;
+  filter: brightness(1.2);
+}
+
+.radar-lead-chip .chip-name,
+.radar-lead-chip-btn .chip-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-pill-muted-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  padding: 0 3px;
+  cursor: help;
+}
+
+.radar-pill-muted-indicator svg,
+.radar-pill-muted-indicator .radar-svg-icon {
+  display: inline-block !important;
+  stroke: #94a3b8 !important;
+}
+
+.radar-inpage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+.radar-inpage-btn.btn-watch {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.radar-inpage-btn.btn-watch:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.5);
+}
+
+.radar-inpage-btn.btn-apartar {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+.radar-inpage-btn.btn-apartar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+}
+
+.radar-inpage-btn.btn-ai {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+.radar-inpage-btn.btn-ai:hover {
+  background: rgba(56, 189, 248, 0.28);
+  color: #fff;
+}
+
+.radar-inpage-btn.btn-more {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.12);
+  padding: 2px 6px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.radar-inpage-btn.btn-more:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+/* Global Vector Lucide Icon Alignment */
+.radar-svg-icon {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+}
+
+/* ========================================================= */
+/* Floating Dropdown Menu: Identidad Unificada Cyber-Dark     */
+/* ========================================================= */
+
+.radar-floating-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 325px !important;
+  background: #0f172a !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #24304f !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px #24304f !important;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000000;
+  animation: fadeInDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-height: calc(100vh - 35px) !important;
+  overflow-y: auto !important;
+}
+
+/* Header del Menú */
+.rf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rf-header-lead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rf-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(99, 102, 241, 0.28)) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  color: #7dd3fc !important;
+  font-size: 11.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  letter-spacing: -0.3px;
+}
+
+.rf-lead-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rf-lead-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rf-lead-sub {
+  font-size: 10.5px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rf-plan-highlight {
+  color: #fde047;
+  font-weight: 700;
+}
+
+.rf-stage-pill {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1.5px 6px;
+  border-radius: 5px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.rf-stage-pill.stage-150 { background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.45); color: #6ee7b7; }
+.rf-stage-pill.stage-registro { background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.45); color: #7dd3fc; }
+.rf-stage-pill.stage-fondeo { background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.45); color: #fde047; }
+.rf-stage-pill.stage-ingresando { background: rgba(168, 85, 247, 0.18); border: 1px solid rgba(168, 85, 247, 0.45); color: #d8b4fe; }
+.rf-stage-pill.stage-revision { background: rgba(249, 115, 22, 0.2); border: 1px solid rgba(249, 115, 22, 0.5); color: #fdba74; }
+.rf-stage-pill.stage-final { background: rgba(236, 72, 153, 0.2); border: 1px solid rgba(236, 72, 153, 0.5); color: #f9a8d4; }
+.rf-stage-pill.stage-sold { background: rgba(234, 179, 8, 0.22); border: 1px solid rgba(234, 179, 8, 0.6); color: #fde047; font-weight: 800; }
+.rf-sold-highlight { color: #fde047 !important; text-shadow: 0 0 8px rgba(234, 179, 8, 0.4); }
+.rf-avatar.avatar-sold { background: linear-gradient(135deg, #eab308, #ca8a04); color: #1e1b4b; box-shadow: 0 0 12px rgba(234, 179, 8, 0.5); font-size: 14px; }
+
+.rf-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.rf-close-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: rgba(244, 63, 94, 0.5);
+  color: #fff;
+}
+
+/* Navegación por Pestañas Segmentadas (Estilo exacto de nav-segmented del popup) */
+.rf-nav-tabs {
+  display: flex;
+  background: #0b0f17;
+  border: 1px solid #24304f;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.rf-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+}
+
+.rf-tab-btn svg,
+.rf-tab-btn .radar-svg-icon {
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.rf-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.rf-tab-btn.active {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 700;
+}
+
+/* Contenido de Pestañas */
+.rf-tab-content {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rf-tab-content.active {
+  display: flex;
+}
+
+/* Tarjetas Modulares */
+.rf-module-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rf-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rf-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rf-section-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.rf-section-tag svg,
+.rf-section-tag .radar-svg-icon {
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.rf-card-divider {
+  height: 1px;
+  background: #24304f;
+  margin: 3px 0;
+}
+
+/* Selector de Planes */
+.rf-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.rf-plan-chip {
+  background: #131b2e;
+  border: 1px solid #24304f;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+}
+
+.rf-plan-chip svg,
+.rf-plan-chip .radar-svg-icon {
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.rf-plan-chip:hover {
+  background: #1a2642;
+  color: #fff;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.rf-plan-chip.active {
+  background: rgba(234, 179, 8, 0.18);
+  border-color: rgba(234, 179, 8, 0.5);
+  color: #fde047;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+  font-weight: 700;
+}
+
+/* Selector de Etapas */
+.rf-stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.rf-stage-chip {
+  border-radius: 9px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rf-stage-chip.stage-150 {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+}
+.rf-stage-chip.stage-150.active, .rf-stage-chip.stage-150:hover {
+  background: rgba(16, 185, 129, 0.24);
+  border-color: #10b981;
+  color: #a7f3d0;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  font-weight: 700;
+}
+
+.rf-stage-chip.stage-registro {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.25);
+  color: #7dd3fc;
+}
+.rf-stage-chip.stage-registro.active, .rf-stage-chip.stage-registro:hover {
+  background: rgba(56, 189, 248, 0.24);
+  border-color: #38bdf8;
+  color: #bae6fd;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  font-weight: 700;
+}
+
+.rf-stage-chip.stage-fondeo {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: #fde047;
+}
+.rf-stage-chip.stage-fondeo.active, .rf-stage-chip.stage-fondeo:hover {
+  background: rgba(245, 158, 11, 0.24);
+  border-color: #f59e0b;
+  color: #fef08a;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  font-weight: 700;
+}
+
+.rf-stage-chip.stage-ingresando {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.25);
+  color: #d8b4fe;
+}
+.rf-stage-chip.stage-ingresando.active, .rf-stage-chip.stage-ingresando:hover {
+  background: rgba(168, 85, 247, 0.24);
+  border-color: #a855f7;
+  color: #f5d0fe;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+  font-weight: 700;
+}
+
+.rf-stage-chip.stage-revision {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: rgba(249, 115, 22, 0.28);
+  color: #fdba74;
+}
+.rf-stage-chip.stage-revision.active, .rf-stage-chip.stage-revision:hover {
+  background: rgba(249, 115, 22, 0.24);
+  border-color: #f97316;
+  color: #ffedd5;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.35);
+  font-weight: 700;
+}
+
+.rf-stage-chip.stage-final {
+  background: rgba(236, 72, 153, 0.08);
+  border-color: rgba(236, 72, 153, 0.28);
+  color: #f9a8d4;
+}
+.rf-stage-chip.stage-final.active, .rf-stage-chip.stage-final:hover {
+  background: rgba(236, 72, 153, 0.24);
+  border-color: #ec4899;
+  color: #fce7f3;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.35);
+  font-weight: 700;
+}
+
+/* Módulo de Fecha de Dinero / Seguimiento */
+.rf-followup-card {
+  border-color: rgba(245, 158, 11, 0.18);
+  background: rgba(245, 158, 11, 0.025);
+}
+
+.rf-btn-clear-date {
+  background: transparent;
+  border: none;
+  color: #f87171;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 1px 4px;
+}
+.rf-btn-clear-date:hover {
+  text-decoration: underline;
+}
+
+.rf-active-followup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 9px;
+  padding: 6px 9px;
+  font-size: 11px;
+  color: #fde047;
+}
+
+.rf-active-followup.today {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: #ef4444;
+  color: #fca5a5;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.rf-active-followup.overdue {
+  background: rgba(249, 115, 22, 0.18);
+  border-color: #f97316;
+  color: #fdba74;
+}
+
+.rf-af-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.rf-af-body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.rf-quick-dates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.rf-qdate-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  white-space: nowrap !important;
+  font-family: inherit;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+}
+
+.rf-qdate-chip svg,
+.rf-qdate-chip .radar-svg-icon {
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.rf-qdate-chip:hover {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fef08a;
+  transform: translateY(-1px);
+}
+
+.rf-custom-date-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rf-date-input {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 4px 6px;
+  color: #f8fafc;
+  font-size: 10.5px;
+  font-family: inherit;
+  flex: 1;
+}
+
+.rf-note-input {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 5px 8px;
+  color: #f8fafc;
+  font-size: 10.5px;
+  font-family: inherit;
+  flex: 1.3;
+}
+
+.rf-date-input:focus, .rf-note-input:focus {
+  border-color: #38bdf8;
+  outline: none;
+}
+
+.rf-btn-save-note {
+  background: rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 8px;
+  color: #38bdf8;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.rf-btn-save-note:hover {
+  background: #38bdf8;
+  color: #000;
+}
+
+/* Acciones Principales */
+.rf-actions-card {
+  gap: 6px;
+}
+
+.rf-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.rf-btn-sale {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+}
+.rf-btn-sale:hover {
+  background: linear-gradient(135deg, #b45309, #d97706);
+  transform: translateY(-1px);
+}
+.rf-btn-sale.is-sold-btn {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(202, 138, 4, 0.18)) !important;
+  border: 1px solid rgba(234, 179, 8, 0.65) !important;
+  color: #fef08a !important;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.35) !important;
+  font-weight: 800;
+}
+.rf-btn-sale.is-sold-btn:hover {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.4), rgba(202, 138, 4, 0.28)) !important;
+  border-color: #eab308 !important;
+  color: #ffffff !important;
+}
+
+/* Tarjeta Resumen de Venta Cerrada */
+.rf-sale-summary-card {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.6), rgba(15, 23, 42, 0.85)) !important;
+  border: 1px solid rgba(234, 179, 8, 0.45) !important;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 12px rgba(234, 179, 8, 0.15);
+}
+.rf-sale-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.25);
+}
+.rf-sale-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #fde047;
+  letter-spacing: 0.5px;
+}
+.rf-sale-plan-tag {
+  background: rgba(234, 179, 8, 0.2);
+  border: 1px solid rgba(234, 179, 8, 0.55);
+  color: #fef08a;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 9px;
+  border-radius: 9999px;
+}
+.rf-sale-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 11px;
+}
+.rf-sale-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rf-sd-label {
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.rf-sd-value {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.rf-btn-apartar {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+}
+.rf-btn-apartar:hover {
+  background: rgba(16, 185, 129, 0.25);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.rf-btn-mute {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+}
+.rf-btn-mute:hover {
+  background: #27354f;
+  border-color: #475569;
+  color: #f1f5f9;
+  transform: translateY(-1px);
+}
+.rf-btn-mute.is-muted {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+.rf-btn-mute.is-muted:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fecaca;
+}
+
+/* Tab 2: Reasignar Asesor */
+.rf-team-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.rf-team-chip {
+  background: #131b2e;
+  border: 1px solid #24304f;
+  border-radius: 7px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.rf-team-chip:hover {
+  background: #1a2642;
+  border-color: #38bdf8;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.rf-team-chip.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* Tab 3: Herramientas Radar */
+.rf-tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rf-tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 7px 10px;
+  color: #e2e8f0;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.rf-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.rf-tool-status {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1.5px 6px;
+  border-radius: 6px;
+}
+.rf-tool-status.on {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+.rf-tool-status.off {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+/* Botón Desactivar IA / Sales Agent */
+.rf-btn-stop-ai {
+  background: rgba(244, 63, 94, 0.08) !important;
+  border: 1px solid rgba(244, 63, 94, 0.3) !important;
+  color: #fda4af !important;
+  transition: all 0.18s ease;
+}
+
+.rf-btn-stop-ai:hover {
+  background: rgba(244, 63, 94, 0.22) !important;
+  border-color: rgba(244, 63, 94, 0.6) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+}
+
+.rf-tool-status.stop-ai {
+  background: rgba(244, 63, 94, 0.25);
+  color: #fecdd3;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.rf-danger-card {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.rf-btn-unwatch {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+  justify-content: center;
+}
+.rf-btn-unwatch:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ffffff;
+}
+
+/* Botones Rápidos en el Header Pill */
+.radar-pill-stage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2.5px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.radar-pill-stage-btn.stage-empty {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #94a3b8;
+}
+.radar-pill-stage-btn.stage-empty:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.radar-pill-stage-btn.stage-150 {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #6ee7b7;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.radar-pill-stage-btn.stage-registro {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #7dd3fc;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+}
+
+.radar-pill-stage-btn.stage-fondeo {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: #f59e0b;
+  color: #fde047;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+.radar-pill-stage-btn.stage-ingresando {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: #a855f7;
+  color: #e9d5ff;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+}
+
+.radar-pill-stage-btn.stage-revision {
+  background: rgba(249, 115, 22, 0.22);
+  border-color: #f97316;
+  color: #fdba74;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.35);
+}
+
+.radar-pill-stage-btn.stage-final {
+  background: rgba(236, 72, 153, 0.22);
+  border-color: #ec4899;
+  color: #fbcfe8;
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.35);
+}
+
+.radar-pill-stage-btn.stage-sold {
+  background: rgba(234, 179, 8, 0.25);
+  border-color: #eab308;
+  color: #fef08a;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.45);
+  font-weight: 800;
+}
+
+/* Botón Rápido de Fecha Dinero en el Header Pill */
+.radar-pill-followup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2.5px 8px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.radar-pill-followup-btn.is-none {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+}
+.radar-pill-followup-btn.is-none:hover {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fef08a;
+}
+
+.radar-pill-followup-btn.is-today {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fecaca;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  animation: pulseGentle 1.8s infinite;
+}
+
+.radar-pill-followup-btn.is-overdue {
+  background: rgba(249, 115, 22, 0.22);
+  border-color: #f97316;
+  color: #fed7aa;
+}
+
+.radar-pill-followup-btn.is-future, .radar-pill-followup-btn.is-tomorrow {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fde047;
+}
+
+/* Alerta Urgente en la lista de chats del Sidebar */
+.radar-chat-badge.has-urgent-followup {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+  animation: pulseGentle 1.8s infinite !important;
+}
+
+@keyframes pulseGentle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Compact Pill Legacy Support */
+.radar-pill-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(3, 31, 24, 0.92);
+  border: 1.5px solid #22c55e;
+  border-radius: 9999px;
+  padding: 4px 10px;
+  color: #f0fdf4;
+  font-weight: 700;
+  font-size: 12.5px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(34, 197, 94, 0.3);
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.radar-pill-compact:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(34, 197, 94, 0.5);
+  transform: translateY(-1px);
+}
+
+.radar-pill-compact.team-danny {
+  background: rgba(12, 31, 56, 0.92);
+  border-color: #38bdf8;
+  color: #e0f2fe;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+.radar-pill-compact.team-pz {
+  background: rgba(34, 18, 54, 0.92);
+  border-color: #c084fc;
+  color: #fae8ff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(192, 132, 252, 0.3);
+}
+
+.radar-pill-compact.team-diego {
+  background: rgba(43, 23, 9, 0.92);
+  border-color: #f97316;
+  color: #ffedd5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(249, 115, 22, 0.3);
+}
+
+.radar-pill-compact.team-aracely {
+  background: rgba(43, 10, 22, 0.92);
+  border-color: #f43f5e;
+  color: #ffe4e6;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(244, 63, 94, 0.3);
+}
+
+.radar-pill-compact.team-dylan {
+  background: rgba(6, 44, 32, 0.92);
+  border-color: #10b981;
+  color: #d1fae5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.radar-pill-compact.team-juan {
+  background: rgba(6, 36, 44, 0.92);
+  border-color: #06b6d4;
+  color: #cffafe;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(6, 182, 212, 0.3);
+}
+
+.radar-pill-compact.team-yuquita {
+  background: rgba(45, 34, 4, 0.92);
+  border-color: #eab308;
+  color: #fef08a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(234, 179, 8, 0.3);
+}
+
+.radar-pill-compact.team-pending {
+  background: rgba(45, 34, 4, 0.92);
+  border-color: #eab308;
+  color: #fef08a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(234, 179, 8, 0.3);
+}
+
+.radar-pill-compact.is-sold {
+  border-color: #eab308;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(234, 179, 8, 0.35);
+}
+
+.radar-pill-name {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-btn-toggle-size {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #e2e8f0;
+  border-radius: 9999px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0;
+  margin-left: 2px;
+}
+
+.radar-btn-toggle-size:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* Expanded Controls Bar */
+.radar-expanded-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 0.18s ease-out;
+}
+
+.radar-owner-group {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.radar-owner-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.radar-owner-btn:hover {
+  color: #ffffff;
+}
+
+.radar-owner-btn.active[data-owner="mine"] {
+  background: rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+.radar-owner-btn.active[data-owner="Danny"] {
+  background: rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+}
+
+.radar-owner-btn.active[data-owner="Pz"] {
+  background: rgba(192, 132, 252, 0.35);
+  color: #e9d5ff;
+}
+
+.radar-owner-btn.active[data-owner="Diego"] {
+  background: rgba(249, 115, 22, 0.35);
+  color: #fed7aa;
+}
+
+.radar-owner-btn.active[data-owner="Aracely"] {
+  background: rgba(244, 63, 94, 0.35);
+  color: #fecdd3;
+}
+
+.radar-owner-btn.active[data-owner="Dylan"] {
+  background: rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+}
+
+.radar-owner-btn.active[data-owner="Juan"] {
+  background: rgba(6, 182, 212, 0.35);
+  color: #67e8f9;
+}
+
+.radar-owner-btn.active[data-owner="Yuquita"] {
+  background: rgba(234, 179, 8, 0.35);
+  color: #fef08a;
+}
+
+.radar-owner-btn.active[data-owner="pending"] {
+  background: rgba(234, 179, 8, 0.35);
+  color: #fef08a;
+}
+
+.radar-btn-action {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.radar-btn-action:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.radar-btn-sale-action {
+  background: rgba(234, 179, 8, 0.2);
+  border-color: rgba(234, 179, 8, 0.4);
+  color: #fde047;
+}
+
+.radar-btn-sale-action:hover {
+  background: rgba(234, 179, 8, 0.35);
+  color: #ffffff;
+}
+
+.radar-btn-trash-action {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  padding: 4px 7px;
+}
+
+.radar-btn-trash-action:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+}
+
+/* Follow Popover (Cyber-Dark Obsidian & Electric Cyan — Gemelo del Popup) */
+.radar-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px !important;
+  background: #0f172a !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #24304f !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px #24304f !important;
+  z-index: 1000000;
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  user-select: none;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Stack de Planes a Apartar (Diseño gemelo a las tarjetas lead-card del popup) */
+.rf-popover-plans-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rf-popover-plan-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: #131b2e;
+  border: 1px solid #24304f;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.rf-popover-plan-card:hover {
+  background: #1a2642;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.rf-popover-plan-card .rf-plan-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.rf-popover-plan-card .rf-plan-emoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.rf-popover-plan-card .rf-plan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rf-popover-plan-card .rf-plan-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.2px;
+}
+
+.rf-popover-plan-card .rf-plan-desc {
+  font-size: 10.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Botón 'Apartar ⚡' — Idéntico a .btn-card-open del popup */
+.rf-popover-plan-card .rf-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.5px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.rf-popover-plan-card:hover .rf-plan-badge {
+  background: #38bdf8;
+  color: #0b1120;
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+}
+
+/* Variantes de Plan */
+.rf-popover-plan-card.plan-starter:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+.rf-popover-plan-card.plan-starter:hover .rf-plan-title {
+  color: #fde047;
+}
+.rf-popover-plan-card.plan-starter .rf-plan-badge {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+.rf-popover-plan-card.plan-starter:hover .rf-plan-badge {
+  background: #f59e0b;
+  color: #0b1120;
+  border-color: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+}
+
+.rf-popover-plan-card.plan-pro:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+.rf-popover-plan-card.plan-pro:hover .rf-plan-title {
+  color: #7dd3fc;
+}
+
+.rf-popover-plan-card.plan-black:hover {
+  border-color: rgba(192, 132, 252, 0.5);
+}
+.rf-popover-plan-card.plan-black:hover .rf-plan-title {
+  color: #e9d5ff;
+}
+.rf-popover-plan-card.plan-black .rf-plan-badge {
+  background: rgba(192, 132, 252, 0.14);
+  border-color: rgba(192, 132, 252, 0.35);
+  color: #c084fc;
+}
+.rf-popover-plan-card.plan-black:hover .rf-plan-badge {
+  background: #c084fc;
+  color: #0b1120;
+  border-color: #c084fc;
+  box-shadow: 0 0 10px rgba(192, 132, 252, 0.45);
+}
+
+.radar-lead-counter {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* In-Page Toast Notification (cuando estás con la pestaña enfocada) */
+.radar-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.radar-inpage-toast {
+  pointer-events: auto;
+  min-width: 340px;
+  max-width: 420px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #24304f;
+  border-left: 3px solid #38bdf8;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.75), 0 0 0 1px #24304f;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: radar-toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+}
+
+.radar-inpage-toast:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  border-left-color: #38bdf8;
+  box-shadow: 0 20px 42px -4px rgba(0, 0, 0, 0.85), 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+@keyframes radar-toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.radar-inpage-toast.toast-hiding {
+  animation: radar-toast-slide-out 0.22s ease forwards;
+}
+
+@keyframes radar-toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+}
+
+.radar-toast-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: #1e293b;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.radar-toast-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.radar-toast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.radar-toast-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.radar-toast-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-toast-stage-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  white-space: nowrap;
+}
+
+.radar-toast-time {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #64748b;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.radar-toast-msg {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.radar-toast-actions {
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-toast-btn-open {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.radar-toast-btn-open:hover {
+  background: #0369a1;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+}
+
+.radar-toast-btn-mute {
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.radar-toast-btn-mute:hover {
+  background: #27354f;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+.radar-toast-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  padding: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.radar-toast-close:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* In-Page Sale Modal */
+.radar-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 29, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000002;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.radar-modal-box {
+  background: #0f172a;
+  border: 1px solid #24304f;
+  border-radius: 12px;
+  width: 360px;
+  padding: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px #24304f;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12.5px;
+}
+
+.radar-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #24304f;
+  padding-bottom: 8px;
+}
+
+.radar-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: all 0.15s;
+}
+
+.radar-modal-close:hover {
+  color: #ffffff;
+}
+
+.radar-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.radar-field-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.radar-field-input {
+  background: #131b2e;
+  border: 1px solid #24304f;
+  border-radius: 6px;
+  padding: 6px 9px;
+  color: #f8fafc;
+  font-size: 12px;
+  outline: none;
+  font-family: inherit;
+}
+
+.radar-field-input:focus {
+  border-color: #38bdf8;
+}
+
+.radar-pill-selector {
+  display: flex;
+  gap: 6px;
+}
+
+.radar-pill-choice {
+  flex: 1;
+  background: #131b2e;
+  border: 1px solid #24304f;
+  border-radius: 6px;
+  padding: 6px 4px;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.radar-pill-choice:hover {
+  background: #1a253d;
+  color: #f1f5f9;
+}
+
+.radar-pill-choice.active {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #7dd3fc;
+}
+
+.radar-modal-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.radar-modal-btn-save {
+  flex: 1;
+  background: #10b981;
+  border: none;
+  color: #022c22;
+  font-weight: 700;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.radar-modal-btn-save:hover {
+  background: #16a34a;
+}
+
+/* In-Chat List Badges for Leads (Respond.io Sidebar) */
+.radar-has-badge {
+  display: flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 70px) !important;
+}
+
+.radar-has-badge > span:first-child {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+}
+
+.radar-chat-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  padding: 1.5px 6px !important;
+  border-radius: 9999px !important;
+  margin-left: 6px !important;
+  white-space: nowrap !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.2px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.15s ease !important;
+}
+
+.radar-chat-badge.team-mine {
+  background: rgba(6, 44, 32, 0.92) !important;
+  border: 1px solid #22c55e !important;
+  color: #86efac !important;
+}
+
+.radar-chat-badge.team-sold {
+  background: rgba(45, 34, 4, 0.92) !important;
+  border: 1px solid #eab308 !important;
+  color: #fef08a !important;
+}
+
+.radar-chat-badge.team-danny {
+  background: rgba(12, 31, 56, 0.92) !important;
+  border: 1px solid #38bdf8 !important;
+  color: #bae6fd !important;
+}
+
+.radar-chat-badge.team-pz {
+  background: rgba(34, 18, 54, 0.92) !important;
+  border: 1px solid #c084fc !important;
+  color: #f5d0fe !important;
+}
+
+.radar-chat-badge.team-diego {
+  background: rgba(43, 23, 9, 0.92) !important;
+  border: 1px solid #f97316 !important;
+  color: #fed7aa !important;
+}
+
+.radar-chat-badge.team-aracely {
+  background: rgba(43, 10, 22, 0.92) !important;
+  border: 1px solid #f43f5e !important;
+  color: #fecdd3 !important;
+}
+
+.radar-chat-badge.team-dylan {
+  background: rgba(6, 44, 32, 0.92) !important;
+  border: 1px solid #10b981 !important;
+  color: #a7f3d0 !important;
+}
+
+.radar-chat-badge.team-juan {
+  background: rgba(6, 36, 44, 0.92) !important;
+  border: 1px solid #06b6d4 !important;
+  color: #a5f3fc !important;
+}
+
+.radar-chat-badge.team-yuquita {
+  background: rgba(45, 34, 4, 0.92) !important;
+  border: 1px solid #eab308 !important;
+  color: #fef08a !important;
+}
+
+.radar-chat-badge.team-pending {
+  background: rgba(45, 34, 4, 0.92) !important;
+  border: 1px solid #eab308 !important;
+  color: #fef08a !important;
+}
+
+.radar-chat-badge.team-other {
+  background: rgba(30, 41, 59, 0.92) !important;
+  border: 1px solid #94a3b8 !important;
+  color: #e2e8f0 !important;
+}
+
+.radar-chat-badge.stage-150 {
+  background: rgba(6, 44, 32, 0.95) !important;
+  border: 1px solid #10b981 !important;
+  color: #6ee7b7 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35) !important;
+}
+
+.radar-chat-badge.stage-registro {
+  background: rgba(12, 31, 56, 0.95) !important;
+  border: 1px solid #38bdf8 !important;
+  color: #7dd3fc !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.35) !important;
+}
+
+.radar-chat-badge.stage-fondeo {
+  background: rgba(43, 23, 9, 0.95) !important;
+  border: 1px solid #f59e0b !important;
+  color: #fde047 !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.35) !important;
+}
+
+.radar-chat-badge.stage-ingresando {
+  background: rgba(34, 18, 54, 0.95) !important;
+  border: 1px solid #a855f7 !important;
+  color: #e9d5ff !important;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.35) !important;
+}
+
+.radar-chat-badge.stage-revision {
+  background: rgba(54, 24, 10, 0.95) !important;
+  border: 1px solid #f97316 !important;
+  color: #fdba74 !important;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.35) !important;
+}
+
+.radar-chat-badge.stage-final {
+  background: rgba(52, 14, 36, 0.95) !important;
+  border: 1px solid #ec4899 !important;
+  color: #fbcfe8 !important;
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.35) !important;
+}
+
+/* ========================================================= */
+/* Radar DOM Scan Inspector Modal & Button                   */
+/* ========================================================= */
+
+.radar-btn-scan-mini {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  color: #38bdf8 !important;
+  font-size: 11px !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.radar-btn-scan-mini:hover {
+  background: rgba(56, 189, 248, 0.3) !important;
+  color: #fff !important;
+}
+
+.radar-scan-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: radarFadeIn 0.2s ease-out;
+}
+
+.radar-scan-modal-box {
+  background: #0f172a;
+  border: 1px solid #24304f;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px #24304f;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 820px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.radar-scan-modal-header {
+  padding: 16px 20px;
+  background: #131b2e;
+  border-bottom: 1px solid #24304f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.radar-scan-modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-scan-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.radar-scan-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.radar-scan-modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.radar-scan-card {
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.radar-scan-card.highlight {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(45, 34, 4, 0.4);
+}
+
+.radar-scan-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.radar-scan-card-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-scan-badge {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.radar-scan-badge.success {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.radar-scan-badge.warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.radar-scan-badge.danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.radar-scan-code-block {
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: monospace;
+  font-size: 11.5px;
+  color: #38bdf8;
+  word-break: break-all;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.radar-scan-modal-footer {
+  padding: 14px 20px;
+  background: #131b2e;
+  border-top: 1px solid #24304f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.radar-scan-btn-copy {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.radar-scan-btn-copy:hover {
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
+}
+
+/* ========================================================= */
+/* Radar Crawl 3 Days Modal & Toast                          */
+/* ========================================================= */
+
+.radar-crawl-highlight-card {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.6), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.6);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
+}
+
+.radar-crawl-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.radar-crawl-item-row:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.radar-crawl-btn-go {
+  background: #10b981;
+  color: #022c22;
+  border: none;
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.radar-crawl-btn-go:hover {
+  background: #34d399;
+  transform: translateY(-1px);
+}
+
+.radar-progress-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13, 19, 34, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 9999px;
+  padding: 8px 20px;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10000005;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  animation: radarFadeInCute 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.2px;
+}
+
+.radar-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.radar-toast-icon svg {
+  display: block;
+}
+
+.radar-toast-svg-icon {
+  display: inline-block;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+  animation: radarPulseDotCute 1.4s infinite ease-in-out;
+}
+
+.radar-toast-icon.toast-icon-stop {
+  color: #f43f5e;
+}
+
+.radar-toast-icon.toast-icon-stop .radar-toast-svg-icon {
+  filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.5));
+}
+
+.radar-toast-icon.toast-icon-success {
+  color: #34d399;
+}
+
+.radar-toast-icon.toast-icon-success .radar-toast-svg-icon {
+  filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.5));
+}
+
+.radar-toast-text {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+/* ========================================================= */
+/* Radar Sales Copilot HUD & AI Suggestion Box               */
+/* ========================================================= */
+
+.radar-copilot-hud {
+  position: fixed;
+  top: 14px;
+  right: 80px;
+  z-index: 999998;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 10px;
+  padding: 8px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: radarFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.radar-copilot-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+.radar-copilot-btn-suggest {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  border: none;
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.radar-copilot-btn-suggest:hover {
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  transform: translateY(-1px);
+}
+
+.radar-copilot-btn-nav {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.radar-copilot-btn-nav:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.radar-copilot-btn-next {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.radar-copilot-btn-next:hover {
+  background: #10b981;
+  color: #022c22;
+}
+
+.radar-sales-suggestion-box {
+  position: fixed;
+  bottom: 80px;
+  left: 360px;
+  right: 320px;
+  max-width: 640px;
+  margin: 0 auto;
+  z-index: 999999;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.25);
+  backdrop-filter: blur(12px);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: radarFadeIn 0.2s ease-out;
+}
+
+.radar-suggestion-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 12.5px;
+  line-height: 1.4;
+  padding: 8px 12px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 58px;
+  outline: none;
+}
+
+.radar-suggestion-textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+/* ========================================================= */
+/* Radar Composer AI Badge (Disponible en Todos los Chats)   */
+/* ========================================================= */
+
+.radar-composer-ai-badge {
+  position: absolute;
+  top: -28px;
+  right: 14px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.18s ease;
+  user-select: none;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.radar-composer-ai-badge:hover {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.5), 0 0 14px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1.5px);
+}
+
+.radar-composer-ai-badge kbd {
+  font-size: 9.5px;
+  font-family: inherit;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.35);
+  color: #94a3b8;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.5px;
+}
+
+.radar-composer-ai-badge:hover kbd {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Apartar Lead Button & Animations */
+.radar-btn-apartar {
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4) !important;
+  font-weight: 700 !important;
+  font-size: 11.5px !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.radar-btn-apartar:hover {
+  background: linear-gradient(135deg, #047857, #059669) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.6) !important;
+  transform: translateY(-1.5px) scale(1.02) !important;
+}
+
+.radar-btn-apartar:active {
+  transform: translateY(0) scale(0.98) !important;
+}
+
+/* =========================================================================
+   RespondRadar Flash HUD — Linear Pure Slate (Solid, High-Contrast SaaS)
+   ========================================================================= */
+.radar-flash-hud {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  z-index: 9999999;
+  background: #0f172a;
+  border: 1px solid #24304f;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px #24304f;
+  border-radius: 12px;
+  padding: 13px 16px;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-width: 310px;
+  max-width: 390px;
+  animation: radarSlideInLinear 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+@keyframes radarSlideInLinear {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.radar-flash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.radar-flash-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.radar-flash-pulsing-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #10b981;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px #10b981;
+  animation: radarPulseLinear 1.6s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes radarPulseLinear {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.radar-icon-pulse {
+  color: #38bdf8;
+  display: inline-flex;
+}
+
+.radar-flash-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f8fafc;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.radar-flash-running-badge {
+  background: #064e3b;
+  border: 1px solid #059669;
+  color: #34d399;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-flash-timer {
+  color: #a7f3d0;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  padding-left: 5px;
+  border-left: 1px solid rgba(52, 211, 153, 0.4);
+  font-size: 10.5px;
+}
+
+.radar-flash-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #131b2e;
+  border: 1px solid #1e293b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.radar-flash-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.radar-flash-stat .stat-label {
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.radar-flash-stat .stat-val {
+  font-weight: 700;
+  color: #f8fafc;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.radar-flash-stat .stat-val.apartados-count {
+  color: #38bdf8;
+  font-size: 14px;
+}
+
+.radar-flash-stat .stat-val.stat-speed-val {
+  color: #10b981;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.radar-icon-speed {
+  color: #10b981;
+}
+
+.radar-flash-stat .stat-val.skipped-count {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.radar-stat-divider {
+  width: 1px;
+  height: 20px;
+  background: #24304f;
+}
+
+.radar-flash-status-text {
+  font-size: 11px;
+  color: #cbd5e1;
+  background: #0b0f17;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid #1e293b;
+  border-left: 3px solid #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.radar-status-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.radar-status-icon-svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.radar-status-icon-svg.icon-eye-pulse {
+  color: #38bdf8;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.45));
+  animation: radarEyePulse 2.2s infinite ease-in-out;
+}
+
+.radar-status-icon-svg.icon-zap-glow {
+  color: #10b981;
+  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5));
+}
+
+.radar-status-icon-svg.icon-error {
+  color: #f43f5e;
+}
+
+@keyframes radarEyePulse {
+  0% { transform: scale(0.95); opacity: 0.85; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.85; }
+}
+
+.radar-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.radar-status-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.radar-flash-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-flash-btn-list {
+  flex: 1;
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.radar-flash-btn-list:hover {
+  background: #27354f;
+  border-color: #475569;
+}
+
+.radar-flash-badge-pill {
+  background: #334155;
+  color: #38bdf8;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.radar-flash-btn-stop {
+  background: #881337;
+  color: #ffe4e6;
+  border: 1px solid #be123c;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.radar-flash-btn-stop:hover {
+  background: #9f1239;
+  border-color: #e11d48;
+  color: #ffffff;
+}
+
+/* =========================================================================
+   Modal de Resumen de Leads Apartados — Linear Pure Slate
+   ========================================================================= */
+.radar-apartados-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000000;
+  background: rgba(11, 15, 23, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: radarFadeInLinear 0.18s ease-out;
+  padding: 20px;
+}
+
+@keyframes radarFadeInLinear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.radar-apartados-modal-window {
+  background: #0f172a;
+  border: 1px solid #24304f;
+  border-radius: 14px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px #24304f;
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: radarModalZoomLinear 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes radarModalZoomLinear {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.radar-apartados-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #131b2e;
+  border-bottom: 1px solid #24304f;
+}
+
+.radar-apartados-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f8fafc;
+}
+
+.radar-apartados-badge {
+  background: #064e3b;
+  border: 1px solid #059669;
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.radar-apartados-badge.zero {
+  background: #1e293b;
+  border-color: #334155;
+  color: #94a3b8;
+}
+
+.radar-apartados-close-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.radar-apartados-close-btn:hover {
+  color: #ffffff;
+  background: #881337;
+  border-color: #be123c;
+}
+
+.radar-apartados-modal-subtitle {
+  padding: 9px 20px;
+  background: #0b0f17;
+  border-bottom: 1px solid #1e293b;
+  font-size: 11.5px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.radar-sub-user {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.radar-sub-status {
+  color: #38bdf8;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.radar-apartados-list-container {
+  padding: 14px 20px;
+  overflow-y: auto;
+  max-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radar-apartados-empty-state {
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radar-empty-icon-box {
+  width: 52px;
+  height: 52px;
+  background: #131b2e;
+  border: 1px solid #24304f;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  margin-bottom: 12px;
+}
+
+.radar-empty-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 0 0 6px 0;
+  color: #f8fafc;
+}
+
+.radar-empty-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+.radar-apartados-item {
+  background: #131b2e;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.radar-apartados-item:hover {
+  background: #18223a;
+  border-color: #3b82f6;
+}
+
+.radar-apartados-item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.radar-apartados-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.radar-apartados-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.radar-apartados-lead-name {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-apartados-channel-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1.5px 6px;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+
+.radar-apartados-channel-tag.ig,
+.radar-apartados-channel-tag.instagram {
+  background: #4c0519;
+  border: 1px solid #9f1239;
+  color: #fda4af;
+}
+
+.radar-apartados-channel-tag.wa,
+.radar-apartados-channel-tag.whatsapp {
+  background: #064e3b;
+  border: 1px solid #059669;
+  color: #6ee7b7;
+}
+
+.radar-apartados-meta {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radar-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.radar-meta-sep {
+  color: #334155;
+}
+
+.radar-apartados-source-tag {
+  color: #10b981;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.radar-apartados-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.radar-apartados-action-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.radar-apartados-action-btn.btn-open {
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #334155;
+}
+
+.radar-apartados-action-btn.btn-open:hover {
+  background: #24304f;
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.radar-apartados-action-btn.btn-reassign {
+  background: #1e1b4b;
+  border: 1px solid #4338ca;
+  color: #a5b4fc;
+}
+
+.radar-apartados-action-btn.btn-reassign:hover {
+  background: #312e81;
+  border-color: #6366f1;
+  color: #ffffff;
+}
+
+.radar-apartados-action-btn.btn-reassign.success {
+  background: #064e3b;
+  border-color: #059669;
+  color: #34d399;
+  cursor: default;
+}
+
+.radar-apartados-modal-footer {
+  padding: 12px 20px;
+  background: #131b2e;
+  border-top: 1px solid #24304f;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.radar-apartados-btn-primary {
+  background: #4f46e5;
+  color: #ffffff;
+  border: 1px solid #6366f1;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.radar-apartados-btn-primary:hover {
+  background: #4338ca;
+  border-color: #818cf8;
+}
+
+.radar-apartados-btn-secondary {
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.radar-apartados-btn-secondary:hover {
+  background: #24304f;
+  border-color: #475569;
+  color: #ffffff;
+}
+
+

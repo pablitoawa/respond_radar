@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RespondRadar</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="radar-container">
+    <!-- Top Header with Segmented Navigation -->
+    <header class="radar-header">
+      <div class="brand">
+        <div class="radar-logo-pulse">
+          <span class="pulse-ring"></span>
+          <span class="pulse-core"></span>
+        </div>
+        <div>
+          <h1 class="brand-title">RespondRadar</h1>
+        </div>
+      </div>
+
+      <nav class="nav-segmented">
+        <button type="button" class="nav-seg-btn active" data-view="leads" id="nav-btn-leads" title="Ver Prospectos Activos">
+          <svg class="radar-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span>Leads</span>
+          <span class="nav-count-badge" id="active-leads-count">0</span>
+        </button>
+        <button type="button" class="nav-seg-btn" data-view="sales" id="nav-btn-sales" title="Métricas y Contabilidad de Ventas">
+          <svg class="radar-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Ventas</span>
+        </button>
+        <button type="button" class="nav-seg-btn" data-view="settings" id="nav-btn-settings" title="Herramientas y Ajustes">
+          <svg class="radar-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Ajustes</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: LEADS (Limpio, enfocado y con máximo espacio vertical)        -->
+    <!-- ===================================================================== -->
+    <div class="view-panel active" id="view-leads">
+      <!-- Active Tab Strip (Ultra compacto) -->
+      <div class="current-chat-strip" id="current-chat-banner">
+        <div class="strip-left">
+          <span class="strip-dot"></span>
+          <span class="strip-lead-name" id="current-tab-lead-name">Buscando chat de Respond.io...</span>
+        </div>
+        <div class="strip-right">
+          <button type="button" class="btn-strip-add" id="btn-add-current">
+            <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Seguir</span>
+          </button>
+          <!-- Popover if not followed -->
+          <div class="banner-popover hidden" id="banner-follow-popover">
+            <div class="popover-heading">¿Qué plan va a comprar?</div>
+            <div class="popover-pills">
+              <button type="button" class="btn-popover-pill" data-plan="Starter">
+                <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>Starter</span>
+              </button>
+              <button type="button" class="btn-popover-pill" data-plan="Pro">
+                <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+                <span>Pro</span>
+              </button>
+              <button type="button" class="btn-popover-pill" data-plan="Black">
+                <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                <span>Black</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unified Search & Date Filter Bar -->
+      <div class="search-filter-row">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="lead-search-input" placeholder="Buscar prospecto o mensaje...">
+        </div>
+        <div class="period-pills-bar" id="period-filter-bar">
+          <button type="button" class="period-pill active" data-period="all" id="period-all" title="Ver todo el historial">Todos (<span id="period-count-all">0</span>)</button>
+          <button type="button" class="period-pill" data-period="today" id="period-today" title="Apartados de hoy">
+            <svg class="radar-svg-icon text-cyan" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Hoy (<span id="period-count-today">0</span>)</span>
+          </button>
+          <button type="button" class="period-pill" data-period="yesterday" id="period-yesterday" title="Apartados de ayer">Ayer (<span id="period-count-yesterday">0</span>)</button>
+          <button type="button" class="period-pill" data-period="week" id="period-week" style="display:none;">Semana (<span id="period-count-week">0</span>)</button>
+        </div>
+      </div>
+
+      <!-- Clean Segmented Tabs -->
+      <div class="filter-tabs-bar">
+        <button type="button" class="tab-btn active" data-filter="mine" id="tab-mine">
+          <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Mis Leads (<span id="tab-count-mine">0</span>)</span>
+        </button>
+        <button type="button" class="tab-btn" data-filter="sold" id="tab-sold">
+          <svg class="radar-svg-icon text-emerald" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Ventas (<span id="tab-count-sold">0</span>)</span>
+        </button>
+        <button type="button" class="tab-btn" data-filter="all" id="tab-all">Todos (<span id="tab-count-all">0</span>)</button>
+      </div>
+
+      <!-- Pipeline & Seguimiento Sub-Filter Bar (Cute & Organized) -->
+      <div class="pipeline-subtabs-bar" id="pipeline-subtabs-bar">
+        <button type="button" class="subtab-btn active" data-subfilter="all" id="subtab-all">
+          <span>Todos</span> <span class="subtab-badge" id="subtab-count-all">0</span>
+        </button>
+        <button type="button" class="subtab-btn subtab-tocar-hoy" data-subfilter="tocar-hoy" id="subtab-tocar-hoy" title="Prospectos agendados que llevan más de 24 horas sin responder">
+          <svg class="radar-svg-icon text-red" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Tocar Hoy (+24h)</span> <span class="subtab-badge" id="subtab-count-tocar-hoy">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-150" data-subfilter="150" id="subtab-150">
+          <svg class="radar-svg-icon text-emerald" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>150</span> <span class="subtab-badge" id="subtab-count-150">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-registro" data-subfilter="registro" id="subtab-registro">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Registro</span> <span class="subtab-badge" id="subtab-count-registro">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-fondeo" data-subfilter="fondeo" id="subtab-fondeo">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Fondeo</span> <span class="subtab-badge" id="subtab-count-fondeo">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-ingresando" data-subfilter="ingresando" id="subtab-ingresando">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>Ingresando</span> <span class="subtab-badge" id="subtab-count-ingresando">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-revision" data-subfilter="revision" id="subtab-revision">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Revisión</span> <span class="subtab-badge" id="subtab-count-revision">0</span>
+        </button>
+        <button type="button" class="subtab-btn stage-final" data-subfilter="final" id="subtab-final">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          <span>Final</span> <span class="subtab-badge" id="subtab-count-final">0</span>
+        </button>
+        <button type="button" class="subtab-btn subtab-followup" data-subfilter="followup" id="subtab-followup" title="Prospectos con fecha pactada para tener el dinero">
+          <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Seguimiento</span> <span class="subtab-badge" id="subtab-count-followup">0</span>
+        </button>
+      </div>
+
+      <!-- Leads List Container (Takes maximum height!) -->
+      <main class="leads-list-container">
+        <div class="leads-header-row">
+          <span class="prospects-label">Prospectos (<span id="total-prospects-label">0</span>)</span>
+          <div class="header-right-actions">
+            <span class="unread-summary" id="unread-summary">0 sin responder</span>
+            <button type="button" class="btn-text-action hidden" id="btn-mark-all-read" title="Marcar todos como leídos">
+              <svg class="radar-svg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Marcar todos</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="leads-list" id="leads-list">
+          <!-- Dynamically populated cards -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state hidden" id="empty-state">
+          <div class="empty-icon">
+            <svg class="radar-svg-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <p class="empty-title">Sin prospectos en esta sección</p>
+          <p class="empty-desc">Usa el botón <strong>"Apartar"</strong> en Respond.io para registrar y vigilar leads de inmediato.</p>
+        </div>
+      </main>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: VENTAS (Dashboard de Ingresos y Planes)                       -->
+    <!-- ===================================================================== -->
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: VENTAS (Dashboard de Ingresos, Meses y Comisiones)             -->
+    <!-- ===================================================================== -->
+    <div class="view-panel" id="view-sales">
+      <div class="sales-dashboard-scroll">
+        <!-- Barra de Filtro de Meses y Periodos -->
+        <div class="sales-period-bar">
+          <div class="sales-month-picker-wrap">
+            <span class="sales-month-picker-icon">
+              <svg class="radar-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <select id="sales-month-select" class="sales-month-select" title="Seleccionar mes de ventas">
+              <option value="current">Este Mes (Octubre)</option>
+              <option value="all">Todo el Histórico</option>
+            </select>
+          </div>
+          <div class="sales-quick-pills">
+            <button type="button" class="sales-period-pill active" id="sales-pill-month" data-month="current">Este Mes</button>
+            <button type="button" class="sales-period-pill" id="sales-pill-all" data-month="all">Todo</button>
+          </div>
+        </div>
+
+        <!-- Hero Revenue & Commission Card -->
+        <div class="sales-hero-card" id="sales-metrics-banner">
+          <div class="hero-top-row">
+            <span class="hero-period-badge" id="sales-hero-period-label">Octubre 2026</span>
+            <span class="hero-currency-tag" id="sales-hero-currency-tag">EUR (€)</span>
+          </div>
+
+          <div class="hero-single-grid">
+            <div class="hero-metric-box hero-comm-box">
+              <span class="hero-metric-label hero-comm-lbl">
+                <svg class="radar-svg-icon text-emerald" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Mi Comisión</span>
+              </span>
+              <div class="hero-commission-amount" id="metric-my-commission">€0</div>
+              <span id="metric-total-revenue" style="display: none;"></span>
+            </div>
+          </div>
+
+          <div class="hero-sub-stats">
+            <span id="metric-total-sales-lbl"><strong id="metric-total-sales">0</strong> ventas cerradas</span>
+            <span class="hero-sparkle" id="metric-commission-detail-lbl">Calculando comisiones...</span>
+          </div>
+        </div>
+
+        <!-- Plan Breakdown Cards con Desglose de Comisión -->
+        <div class="plans-stats-grid">
+          <div class="plan-stat-card starter">
+            <div class="stat-icon">
+              <svg class="radar-svg-icon text-amber" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="stat-data">
+              <div class="stat-row">
+                <span class="stat-name">Starter</span>
+                <span class="stat-count" id="metric-starter-sales">0</span>
+              </div>
+              <span class="stat-commission-pill" id="metric-starter-comm">€0 com.</span>
+            </div>
+          </div>
+          <div class="plan-stat-card pro">
+            <div class="stat-icon">
+              <svg class="radar-svg-icon text-cyan" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+            </div>
+            <div class="stat-data">
+              <div class="stat-row">
+                <span class="stat-name">Pro</span>
+                <span class="stat-count" id="metric-pro-sales">0</span>
+              </div>
+              <span class="stat-commission-pill" id="metric-pro-comm">€0 com.</span>
+            </div>
+          </div>
+          <div class="plan-stat-card black">
+            <div class="stat-icon">
+              <svg class="radar-svg-icon text-purple" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+            </div>
+            <div class="stat-data">
+              <div class="stat-row">
+                <span class="stat-name">Black</span>
+                <span class="stat-count" id="metric-black-sales">0</span>
+              </div>
+              <span class="stat-commission-pill" id="metric-black-comm">€0 com.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sales Closed Leads List -->
+        <div class="sales-leads-section">
+          <div class="section-title-bar">
+            <span>Leads Convertidos (<span id="sales-period-tag-sub">Este Mes</span>)</span>
+            <span class="section-badge" id="sales-section-count">0</span>
+          </div>
+          <div class="sales-custom-list" id="sales-custom-list">
+            <!-- Dynamically populated sold cards -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: AJUSTES Y HERRAMIENTAS (Organización Total)                   -->
+    <!-- ===================================================================== -->
+    <div class="view-panel" id="view-settings">
+      <div class="settings-scroll">
+        <!-- Tarjeta: Configuración de Comisiones (Ganancia Personal) -->
+        <div class="settings-card" id="settings-commissions-card">
+          <div class="card-header">
+            <span class="card-icon">
+              <svg class="radar-svg-icon text-emerald" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            <div class="card-title-group">
+              <span class="card-title">Comisiones por Plan</span>
+              <span class="card-desc">Define cuánto ganas por venta para calcular tus ingresos</span>
+            </div>
+            <span class="status-pill-tag online" id="commissions-badge-status">Guardado</span>
+          </div>
+          <div class="card-body">
+            <div class="commissions-grid">
+              <div class="commission-item-card starter">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-amber" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Starter</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="comm-sym-starter">€</span>
+                  <input type="number" id="comm-starter-val" class="comm-num-input" min="0" step="1" value="10" placeholder="10">
+                </div>
+                <span class="comm-item-sub">por venta</span>
+              </div>
+
+              <div class="commission-item-card pro">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-cyan" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Pro</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="comm-sym-pro">€</span>
+                  <input type="number" id="comm-pro-val" class="comm-num-input" min="0" step="1" value="20" placeholder="20">
+                </div>
+                <span class="comm-item-sub">por venta</span>
+              </div>
+
+              <div class="commission-item-card black">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-purple" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Black</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="comm-sym-black">€</span>
+                  <input type="number" id="comm-black-val" class="comm-num-input" min="0" step="1" value="50" placeholder="50">
+                </div>
+                <span class="comm-item-sub">por venta</span>
+              </div>
+            </div>
+
+            <div class="setting-item-row" style="margin-top: 10px;">
+              <span class="setting-item-lbl">Moneda de Comisiones:</span>
+              <div class="choice-group">
+                <button type="button" class="choice-btn active" id="comm-curr-eur" data-curr="EUR">EUR (€)</button>
+                <button type="button" class="choice-btn" id="comm-curr-usd" data-curr="USD">USD ($)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta: Precios Oficiales de los Planes -->
+        <div class="settings-card" id="settings-plan-prices-card">
+          <div class="card-header">
+            <span class="card-icon">
+              <svg class="radar-svg-icon text-amber" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            <div class="card-title-group">
+              <span class="card-title">Precios de los Planes (Aparte en Pantalla)</span>
+              <span class="card-desc">Valores mostrados en los botones al apartar leads en Respond.io</span>
+            </div>
+            <span class="status-pill-tag online" id="plan-prices-badge-status">Guardado</span>
+          </div>
+          <div class="card-body">
+            <div class="commissions-grid">
+              <div class="commission-item-card starter">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-amber" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Starter</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="plan-price-sym-starter">€</span>
+                  <input type="number" id="plan-price-starter-val" class="comm-num-input" min="0" step="1" value="29" placeholder="29">
+                </div>
+                <span class="comm-item-sub">Básico</span>
+              </div>
+
+              <div class="commission-item-card pro">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-cyan" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Pro</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="plan-price-sym-pro">€</span>
+                  <input type="number" id="plan-price-pro-val" class="comm-num-input" min="0" step="1" value="59" placeholder="59">
+                </div>
+                <span class="comm-item-sub">Recomendado</span>
+              </div>
+
+              <div class="commission-item-card black">
+                <div class="comm-header">
+                  <span class="comm-star">
+                    <svg class="radar-svg-icon text-purple" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                  </span>
+                  <span class="comm-plan-title">Black</span>
+                </div>
+                <div class="comm-input-wrap">
+                  <span class="comm-symbol" id="plan-price-sym-black">€</span>
+                  <input type="number" id="plan-price-black-val" class="comm-num-input" min="0" step="1" value="130" placeholder="130">
+                </div>
+                <span class="comm-item-sub">VIP Exclusivo</span>
+              </div>
+            </div>
+
+            <div class="setting-item-row" style="margin-top: 10px;">
+              <span class="setting-item-lbl">Moneda de los Planes:</span>
+              <div class="choice-group">
+                <button type="button" class="choice-btn active" id="plan-price-curr-eur" data-curr="EUR">EUR (€)</button>
+                <button type="button" class="choice-btn" id="plan-price-curr-usd" data-curr="USD">USD ($)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Tarjeta: Palabras Clave de Campaña (Auto-Apartador Flash) -->
+        <div class="settings-card" id="settings-flash-keywords-card">
+          <div class="card-header">
+            <span class="card-icon">
+              <svg class="radar-svg-icon text-amber" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+            </span>
+            <div class="card-title-group">
+              <span class="card-title">Palabras Clave de Campaña (Flash / Leads)</span>
+              <span class="card-desc">Palabras que activan el Auto-Apartador Flash y el radar de prospectos</span>
+            </div>
+            <span class="status-pill-tag online" id="flash-keywords-badge-status">3 Palabras</span>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 8px;">
+              <textarea id="flash-keywords-input" class="tracking-phrase-textarea" rows="2" placeholder="Ej: KING, REY, SECRETO (o separadas por línea)"></textarea>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <span style="font-size: 10.5px; color: var(--text-muted); line-height: 1.35;">⚡ Detecta automáticamente variantes alargadas (ej: <i>kinggggg</i>, <i>reeeey</i>, <i>secretoooo</i>, <i>k-i-n-g</i>). Separa por comas o saltos de línea.</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-subaction" id="btn-reset-flash-keywords" title="Restaurar palabras por defecto (KING, REY, SECRETO)" style="white-space: nowrap; padding: 5px 10px;">
+                  <span>Por Defecto</span>
+                </button>
+                <button type="button" class="btn-subaction btn-primary-soft" id="btn-save-flash-keywords" style="white-space: nowrap; padding: 5px 12px; font-weight: 600;">
+                  <span>Guardar Palabras</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta: Mensaje de Bienvenida del Auto-Apartador Flash -->
+        <div class="settings-card" id="settings-flash-greeting-card">
+          <div class="card-header">
+            <span class="card-icon">
+              <svg class="radar-svg-icon text-amber" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+            </span>
+            <div class="card-title-group">
+              <span class="card-title">Mensaje de Bienvenida (Flash Apartador)</span>
+              <span class="card-desc">Texto que se envía automáticamente al apartar un King</span>
+            </div>
+            <span class="status-pill-tag" id="greeting-msg-badge-status">Por Defecto</span>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 8px;">
+              <textarea id="flash-greeting-input" class="tracking-phrase-textarea" rows="2" placeholder="Ej: Hola, cómo estás? De donde eres y qué edad tienes?"></textarea>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+              <span style="font-size: 10.5px; color: var(--text-muted); line-height: 1.35;">⚡ Enviado en 0ms cuando el Auto-Apartador Flash toma un King.</span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-subaction" id="btn-reset-flash-greeting" title="Restaurar saludo por defecto" style="white-space: nowrap; padding: 5px 10px;">
+                  <span>Por Defecto</span>
+                </button>
+                <button type="button" class="btn-subaction btn-primary-soft" id="btn-save-flash-greeting" style="white-space: nowrap; padding: 5px 12px; font-weight: 600;">
+                  <span>Guardar Saludo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 4: Preferencias & Datos -->
+        <div class="settings-card">
+          <div class="card-header">
+            <span class="card-icon">
+              <svg class="radar-svg-icon text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+            <div class="card-title-group">
+              <span class="card-title">Preferencias & Copia de Seguridad</span>
+              <span class="card-desc">Alertas, interfaz y exportación de datos</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="toggle-row" id="toggle-sound-btn">
+              <div class="toggle-info">
+                <span class="toggle-name"><span id="sound-icon"></span> <span id="sound-label">Alertas Sonoras</span></span>
+                <span class="toggle-desc">Reproducir sonido ante nuevos mensajes de leads</span>
+              </div>
+              <div class="custom-switch active" id="sound-custom-switch">
+                <span class="switch-bullet"></span>
+              </div>
+            </div>
+
+            <div class="toggle-row" id="toggle-widget-btn">
+              <div class="toggle-info">
+                <span class="toggle-name"><span id="widget-icon"></span> <span id="widget-label">Barra Flotante en Pantalla</span></span>
+                <span class="toggle-desc">Mostrar widget en Respond.io (Atajo Alt + H)</span>
+              </div>
+              <div class="custom-switch active" id="widget-custom-switch">
+                <span class="switch-bullet"></span>
+              </div>
+            </div>
+
+            <div class="toggle-row" id="toggle-keyboard-nav-btn">
+              <div class="toggle-info">
+                <span class="toggle-name"><span id="keyboard-nav-icon"></span> <span id="keyboard-nav-label">Navegación con Teclado (Alt + ↑ / Alt + ↓)</span></span>
+                <span class="toggle-desc">Cambiar entre chats con las flechas y enfocar el teclado</span>
+              </div>
+              <div class="custom-switch active" id="keyboard-nav-custom-switch">
+                <span class="switch-bullet"></span>
+              </div>
+            </div>
+
+            <div class="card-btn-row" style="margin-top: 10px;">
+              <button type="button" class="btn-subaction" id="btn-export-backup">
+                <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Exportar JSON</span>
+              </button>
+              <input type="file" id="import-file-input" accept=".json" style="display:none">
+              <button type="button" class="btn-subaction" id="btn-import-backup">
+                <svg class="radar-svg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <span>Importar JSON</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minimalist Sticky Footer -->
+    <footer class="radar-footer-clean">
+      <div class="footer-shortcuts">
+        <span>Navegar chats: <kbd>Alt + ↓/↑</kbd> · Ocultar widget: <kbd>Alt + H</kbd></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Modal: Registrar / Editar Venta (Preservado 100%) -->
+  <div class="modal-overlay hidden" id="sale-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 class="modal-title">
+            <svg class="radar-svg-icon text-emerald" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Registrar Venta</span>
+          </h2>
+          <span class="modal-lead-name" id="modal-lead-name">Nombre Lead</span>
+        </div>
+        <button class="modal-close-btn" id="modal-close-btn" type="button">
+          <svg class="radar-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="sale-form" class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Paquete Comprado</label>
+          <div class="plan-pill-group">
+            <button type="button" class="plan-pill active" data-plan="Starter" id="pill-starter">
+              <svg class="radar-svg-icon text-amber" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Starter</span>
+            </button>
+            <button type="button" class="plan-pill" data-plan="Pro" id="pill-pro">
+              <svg class="radar-svg-icon text-cyan" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9"/></svg>
+              <span>Pro</span>
+            </button>
+            <button type="button" class="plan-pill" data-plan="Black" id="pill-black">
+              <svg class="radar-svg-icon text-purple" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+              <span>Black</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Tipo de Pago</label>
+            <div class="payment-mode-group">
+              <button type="button" class="mode-pill active" data-mode="abono" id="mode-abono">Abono</button>
+              <button type="button" class="mode-pill" data-mode="completo" id="mode-completo">Pago Completo</button>
+            </div>
+          </div>
+          <div class="form-group flex-1" id="sale-amount-container">
+            <label class="form-label">Monto del Abono</label>
+            <input type="text" id="sale-amount" placeholder="Ej: €25.00 o €130.00" class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sale-hfm-id">ID HFM</label>
+          <input type="text" id="sale-hfm-id" class="form-input" placeholder="Ej: 68508627">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sale-invoice-url">URL de la Factura</label>
+          <input type="url" id="sale-invoice-url" class="form-input" placeholder="https://pay.stripe.com/... o pretopay">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sale-qr-url">URL QR Telegram</label>
+          <input type="url" id="sale-qr-url" class="form-input" placeholder="https://... enlace tarjeta telegram">
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="btn-save-sale" style="width: 100%;">
+            <svg class="radar-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>Guardar Venta</span>
+          </button>
+        </div>
+        <div class="modal-danger-actions hidden" id="modal-danger-actions">
+          <button type="button" class="btn-link-danger" id="btn-revert-sale">Desmarcar venta (volver a prospecto activo)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../content/icons.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

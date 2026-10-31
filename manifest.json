@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "RespondRadar Standalone - Monitor & Ventas",
+  "version": "2.0.0",
+  "description": "Herramienta autónoma e independiente para gestionar leads, seguimiento, ventas y Auto-Apartador Flash en Respond.io.",
+  "permissions": [
+    "storage",
+    "notifications",
+    "tabs",
+    "activeTab",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://app.respond.io/*",
+    "https://*.respond.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "RespondRadar Standalone - Tus Leads",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://app.respond.io/*"],
+      "js": ["content/page_bridge.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://app.respond.io/*"],
+      "js": [
+        "content/icons.js",
+        "content/core_state.js",
+        "content/dom_utils.js",
+        "content/ui_components.js",
+        "content/chat_crawler.js",
+        "content/sales_engine.js",
+        "content/flash_apartador.js",
+        "content/content_main.js"
+      ],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content/page_bridge.js",
+        "assets/fonts/*"
+      ],
+      "matches": ["https://app.respond.io/*"]
+    }
+  ]
+}
