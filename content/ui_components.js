@@ -1,19 +1,10 @@
 // RespondRadar - Módulo 3: Interfaz de Usuario, Widget Flotante, Modales y Notificaciones
-// content/ui_components.js
-
-// -------------------------------------------------------------------------
-// Control de Visibilidad del Widget Flotante
-// -------------------------------------------------------------------------
 
 async function toggleWidgetVisibility() {
   isWidgetHidden = !isWidgetHidden;
   await safeStorageSet({ widgetHidden: isWidgetHidden });
   updateWidgetUI();
 }
-
-// -------------------------------------------------------------------------
-// Renderizado y Gestión del Widget Flotante de Leads
-// -------------------------------------------------------------------------
 
 function updateWidgetUI() {
   let widget = document.getElementById('respond-radar-widget');
@@ -301,8 +292,8 @@ function updateWidgetUI() {
               <div class="rf-lead-meta">
                 <span class="rf-lead-name" title="${escapeHtml(contactName)}">${escapeHtml(truncate(contactName, 17))}</span>
                 <span class="rf-lead-sub">
-                  ${isSold 
-                    ? `👑 <strong class="rf-plan-highlight rf-sold-highlight">Venta Cerrada (${currentPlan})</strong> · <span class="rf-stage-pill stage-sold">👑 Venta</span>` 
+                  ${isSold
+                    ? `👑 <strong class="rf-plan-highlight rf-sold-highlight">Venta Cerrada (${currentPlan})</strong> · <span class="rf-stage-pill stage-sold">👑 Venta</span>`
                     : `${iconStar} Mío · <strong class="rf-plan-highlight">${currentPlan}</strong>${processStage ? ` · <span class="rf-stage-pill stage-${getStageSlug(processStage)}">${processStage}</span>` : ''}`
                   }
                 </span>
@@ -452,7 +443,6 @@ function updateWidgetUI() {
     </div>
   `;
 
-  // Listeners para abrir / cerrar menú
   document.getElementById('radar-watched-chip-btn')?.addEventListener('click', (e) => {
     e.stopPropagation();
     isMenuOpen = !isMenuOpen;
@@ -486,7 +476,6 @@ function updateWidgetUI() {
     updateWidgetUI();
   });
 
-  // Selector de Pestañas del Menú
   document.querySelectorAll('.rf-tab-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -495,7 +484,6 @@ function updateWidgetUI() {
     });
   });
 
-  // Selector de Plan
   document.querySelectorAll('.rf-plan-chip').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -511,7 +499,6 @@ function updateWidgetUI() {
     });
   });
 
-  // Selector de Etapa
   document.querySelectorAll('.rf-stage-chip').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -530,7 +517,6 @@ function updateWidgetUI() {
     });
   });
 
-  // Chips Rápidos de Fecha de Dinero
   document.querySelectorAll('.rf-qdate-chip').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -547,7 +533,6 @@ function updateWidgetUI() {
     });
   });
 
-  // Guardar Fecha y Nota Personalizada
   document.getElementById('rf-save-date-note-btn')?.addEventListener('click', async (e) => {
     e.stopPropagation();
     const dateVal = document.getElementById('rf-custom-date-input')?.value;
@@ -563,7 +548,6 @@ function updateWidgetUI() {
     }
   });
 
-  // Borrar Fecha de Dinero
   document.getElementById('rf-clear-followup-btn')?.addEventListener('click', async (e) => {
     e.stopPropagation();
     delete lead.followUpDate;
@@ -658,10 +642,6 @@ async function unwatchCurrentLead(conversationId) {
     safeSendMessage({ type: 'UPDATE_BADGE' });
   }
 }
-
-// -------------------------------------------------------------------------
-// Modal de Registro Rápido de Venta
-// -------------------------------------------------------------------------
 
 function openInPageSaleModal(conversationId) {
   const resolvedConvId = conversationId || (typeof parseCurrentUrl === 'function' ? parseCurrentUrl().conversationId : null);
@@ -803,7 +783,6 @@ function openInPageSaleModal(conversationId) {
     const invoiceUrl = overlay.querySelector('#modal-sale-invoice')?.value?.trim() || '';
     const telegramQrUrl = overlay.querySelector('#modal-sale-qr')?.value?.trim() || '';
 
-    // Obtener la versión más fresca de watchedLeads directamente desde chrome.storage para evitar race conditions
     let freshWatched = {};
     try {
       const storage = await chrome.storage.local.get(['watchedLeads']);
@@ -915,10 +894,6 @@ function openInPageSaleModal(conversationId) {
   });
 }
 
-// -------------------------------------------------------------------------
-// Notificaciones Toast en Pantalla
-// -------------------------------------------------------------------------
-
 function showInPageToast({ contactName, messageSnippet, conversationId, spaceId, fullUrl }) {
   let container = document.getElementById('radar-toast-container');
   if (!container) {
@@ -928,7 +903,6 @@ function showInPageToast({ contactName, messageSnippet, conversationId, spaceId,
     document.body.appendChild(container);
   }
 
-  // Límite estricto: máximo 2 toasts simultáneos para no saturar la pantalla
   const activeToasts = Array.from(container.querySelectorAll('.radar-inpage-toast:not(.toast-hiding)'));
   if (activeToasts.length >= 2) {
     const oldest = activeToasts[0];
@@ -1173,10 +1147,6 @@ function showApartadoSuccessToast(leadName, captionText) {
   }
 }
 
-// -------------------------------------------------------------------------
-// Apartado Local de Leads (100% Autónomo en Chrome)
-// -------------------------------------------------------------------------
-
 async function handleApartarLeadLocal(plan = 'Starter') {
   const { spaceId, conversationId } = parseCurrentUrl();
   if (!conversationId) {
@@ -1198,10 +1168,6 @@ async function handleApartarLeadLocal(plan = 'Starter') {
 }
 
 const handleApartarLeadWithScreenshot = handleApartarLeadLocal;
-
-// -------------------------------------------------------------------------
-// Modal del Inspector Estructural del DOM
-// -------------------------------------------------------------------------
 
 function showDomScanModal(report) {
   const existing = document.getElementById('radar-dom-scan-modal');

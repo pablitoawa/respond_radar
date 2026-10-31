@@ -1,8 +1,5 @@
-// RespondRadar - Módulo 1: Estado Global, Configuración y Utilidades Primitivas
-// content/core_state.js
-
-// Configuración y Constantes Globales
-const MAX_NAME_WINDOW_MS = 3 * 60 * 1000; // Ventana máxima de 3 minutos para proteger contra duplicados
+// RespondRadar - Módulo 1
+const MAX_NAME_WINDOW_MS = 3 * 60 * 1000;
 const DEFAULT_FLASH_GREETING = "Hola, cómo estás? De donde eres y qué edad tienes?";
 var FLASH_GREETING_MESSAGE = DEFAULT_FLASH_GREETING;
 const VIP_TARGET_CHAT_IDS = [
@@ -18,7 +15,6 @@ const VIP_TARGET_CHAT_IDS = [
   "549656101"
 ];
 
-// Lista de Compañeros de Equipo Humanos (Cualquier lead asignado a ellos es ESTRICTAMENTE PROHIBIDO)
 const TEAMMATE_NAMES = [
   'diego tacuri', 'diego tacu', 'dutandiego', '1073785',
   'gabriela moya',
@@ -50,7 +46,6 @@ const TEAMMATE_SHORT_REGEX = [
 function isTeammateName(text) {
   if (!text) return false;
   const s = text.toLowerCase().trim();
-  // Daniela Tacuri somos nosotros (asesora activa), nunca considerar como compañero ajeno
   if (s.includes('daniela tacuri') || (s.includes('daniela') && !s.includes('moya'))) {
     return false;
   }
@@ -60,7 +55,6 @@ function isTeammateName(text) {
   return TEAMMATE_SHORT_REGEX.some(re => re.test(s));
 }
 
-// Etapas de Cierre del Proceso para Leads de Dey
 const LEAD_PROCESS_STAGES = [
   { id: '150', label: '150 ✅', icon: '✅', color: '#10b981' },
   { id: 'registro', label: 'En registro', icon: '📝', color: '#38bdf8' },
@@ -83,7 +77,6 @@ function getStageSlug(stage) {
   return 'custom';
 }
 
-// Utilidades para cálculo de Fecha Promesa de Dinero / Seguimiento
 function getQuickFollowUpDate(type) {
   const now = new Date();
   const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -155,7 +148,6 @@ function getFollowUpStatus(dateStr) {
   };
 }
 
-// Estado Compartido Global (declarado con var para accesibilidad total en el contexto aislado)
 var watchedLeads = {};
 var phraseTrackedLeads = {};
 var autoAssignQueue = {};
@@ -195,12 +187,10 @@ function isFlashTriggerMatch(text, customKeywords = null) {
   const raw = String(text);
   const norm = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^[↙↗↖↘▲▼►◄\s]+/, '').trim();
 
-  // Exclusión estricta de marcas de comunidad ("fxkings", "fxking", etc.)
   if (/\bfx\s*[-_]?\s*(?:k+i+n+g+[s]?|r+e+y+[e]?s?|s+e+c+r+e+t+o+[s]?)\b/i.test(norm) || norm.includes('fxking') || norm.includes('fxkings')) {
     return false;
   }
 
-  // Coincidencia por emoji de corona 👑
   const isCrown = raw.includes('👑') && (norm.length <= 4 || /^[👑\s¡!¿?._-]+$/.test(raw));
   if (isCrown) return true;
 
@@ -243,8 +233,8 @@ var isWidgetHidden = false;
 var isWidgetExpanded = false;
 var isFollowPopoverOpen = false;
 var isMenuOpen = false;
-var activeFloatingMenuTab = 'pipeline'; // 'pipeline' | 'equipo' | 'tools'
-var activeFollowPopoverTab = 'planes'; // 'planes' | 'equipo' | 'tools'
+var activeFloatingMenuTab = 'pipeline';
+var activeFollowPopoverTab = 'planes';
 var isBridgeOnline = true;
 var isSyncingBridge = false;
 var isInternalDomUpdate = false;
@@ -253,7 +243,6 @@ var sequentialSession = null;
 var crawlAbortController = null;
 var lastUrl = window.location.href;
 
-// Estado del Auto-Apartador Flash ("El Rey")
 var flashApartadorState = {
   active: false,
   get running() { return this.active; },
@@ -270,7 +259,6 @@ var flashApartadorState = {
   apartadosList: []
 };
 
-// Estado de la Sesión de la API Interna de Respond.io (0 ms Takeover)
 var apiSessionState = {
   token: null,
   spaceId: '384258',
@@ -280,7 +268,6 @@ var apiSessionState = {
   lastUpdated: 0
 };
 
-// Escuchar actualizaciones de credenciales emitidas por page_bridge.js (MAIN world)
 window.addEventListener('RADAR_API_SESSION_UPDATED', (e) => {
   if (e && e.detail) {
     const d = e.detail;
@@ -293,21 +280,14 @@ window.addEventListener('RADAR_API_SESSION_UPDATED', (e) => {
   }
 });
 
-// Solicitar proactivamente el estado de la sesión al inicializarse
 setTimeout(() => {
   window.dispatchEvent(new CustomEvent('RADAR_REQUEST_API_SESSION'));
 }, 60);
 
-// -------------------------------------------------------------------------
-// Validaciones y Almacenamiento Seguro
-// -------------------------------------------------------------------------
-
-// Comprobar de forma segura si la extensión sigue activa en Chrome
 function isExtensionValid() {
   return typeof chrome !== 'undefined' && chrome.runtime && !!chrome.runtime.id;
 }
 
-// Guardado seguro en storage que previene errores de contexto invalidado al recargar
 function safeStorageSet(data) {
   if (!isExtensionValid()) return Promise.resolve();
   try {
@@ -317,7 +297,6 @@ function safeStorageSet(data) {
   }
 }
 
-// Envío seguro de mensajes al background worker con soporte de respuesta
 function safeSendMessage(msg, callback) {
   if (!isExtensionValid()) return;
   try {
@@ -333,9 +312,6 @@ function safeSendMessage(msg, callback) {
   }
 }
 
-// -------------------------------------------------------------------------
-// Sintetizador de Audio Web Audio API
-// -------------------------------------------------------------------------
 var sharedAudioCtx = null;
 var hasUserInteracted = false;
 
@@ -353,7 +329,6 @@ function unlockAudioContext() {
   } catch (e) { }
 }
 
-// Desbloqueo anticipado por fase de captura en cualquier interacción del usuario
 ['click', 'keydown', 'pointerdown', 'mousedown', 'touchstart'].forEach(evt => {
   window.addEventListener(evt, unlockAudioContext, { passive: true, capture: true });
 });
@@ -364,13 +339,10 @@ function playSalesAlertSound() {
     const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtxClass) return;
 
-    // Verificar si el navegador permite autoplay según interacción previa
     const isActivationActive = typeof navigator !== 'undefined' && navigator.userActivation
       ? navigator.userActivation.hasBeenActive
       : hasUserInteracted;
 
-    // Si aún no hubo ningún gesto del usuario en la pestaña, no intentar instanciar ni reanudar
-    // para evitar advertencias de Autoplay en la consola de Chrome
     if (!isActivationActive && (!sharedAudioCtx || sharedAudioCtx.state !== 'running')) {
       return;
     }
@@ -389,7 +361,6 @@ function playSalesAlertSound() {
     const ctx = sharedAudioCtx;
     const now = ctx.currentTime;
 
-    // Nota 1: E5 (659.25 Hz)
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = 'sine';
@@ -401,7 +372,6 @@ function playSalesAlertSound() {
     osc1.start(now);
     osc1.stop(now + 0.15);
 
-    // Nota 2: B5 (987.77 Hz)
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = 'triangle';
@@ -414,10 +384,6 @@ function playSalesAlertSound() {
     osc2.stop(now + 0.35);
   } catch (err) { }
 }
-
-// -------------------------------------------------------------------------
-// Utilidades de Texto, Fechas y Normalización
-// -------------------------------------------------------------------------
 
 function truncate(str, max) {
   if (!str) return '';
@@ -448,22 +414,18 @@ function isContactNameMatch(nameA, nameB) {
   const cleanB = normalizeContactName(nameB);
   if (!cleanA || !cleanB) return false;
 
-  // 1. Coincidencia idéntica
   if (cleanA === cleanB) return true;
 
-  // 2. Coincidencia por ID numérico
   const digitsA = cleanA.match(/\d{7,16}/);
   const digitsB = cleanB.match(/\d{7,16}/);
   if (digitsA && digitsB && digitsA[0] === digitsB[0]) {
     return true;
   }
 
-  // 3. Comparación por palabras completas (tokens)
   const wordsA = cleanA.split(/\s+/).filter(w => w.length > 1);
   const wordsB = cleanB.split(/\s+/).filter(w => w.length > 1);
   if (wordsA.length === 0 || wordsB.length === 0) return false;
 
-  // Si uno de los nombres tiene solo 1 palabra y el otro tiene 2 o más palabras, NO coinciden
   if (wordsA.length === 1 || wordsB.length === 1) {
     return wordsA.length === 1 && wordsB.length === 1 && wordsA[0] === wordsB[0];
   }
@@ -475,7 +437,6 @@ function isContactNameMatch(nameA, nameB) {
     if (setB.has(w)) commonCount++;
   }
 
-  // Deben compartir al menos 2 palabras idénticas
   if (commonCount >= 2) {
     return true;
   }
@@ -626,10 +587,6 @@ function estimateChatAgeDays(timeStr) {
   return 0;
 }
 
-// -------------------------------------------------------------------------
-// Carga de Datos desde Chrome Storage
-// -------------------------------------------------------------------------
-
 async function loadStoredData() {
   try {
     const data = await chrome.storage.local.get(['watchedLeads', 'phraseTrackedLeads', 'autoAssignQueue', 'dismissedLeads', 'soundEnabled', 'widgetHidden', 'bridgeOnline', 'customTrackingPhrases', 'flashGreetingMessage', 'planPricesConfig', 'flashTriggerKeywords', 'keyboardNavigationEnabled']);
@@ -677,7 +634,6 @@ async function loadStoredData() {
         cleaned = true;
         continue;
       }
-      // Migrar automáticamente leads que se etiquetaron como 'mine' por frase clave sin haber sido apartados manualmente
       if (
         l.owner === 'mine' &&
         !l.manuallyWatched &&

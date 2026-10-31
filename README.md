@@ -27,3 +27,4 @@ Extensión autónoma e independiente para Google Chrome diseñada para asesores 
   - Precios de venta al público.
   - Palabras clave y mensaje de bienvenida para el auto-apartador.
   - Copia de seguridad y restauración en formato JSON.
+

@@ -1,13 +1,9 @@
-// RespondRadar - Main World Bridge & API Interceptor (Runs in page 'top' context)
-// Permite ejecución en 0 ms vía API interna de Respond.io y comandos en la consola
+
 
 (function () {
   if (window.__respondRadarBridgeLoaded) return;
   window.__respondRadarBridgeLoaded = true;
 
-  // -------------------------------------------------------------------------
-  // Almacén de Sesión y Credenciales de la API de Respond.io
-  // -------------------------------------------------------------------------
   const apiSession = {
     token: null,
     spaceId: null,
@@ -23,12 +19,11 @@
     lastCapturedAt: null
   };
 
-  // Intentar cargar credenciales cacheadas de la sesión (verificando coherencia)
   try {
     const cached = sessionStorage.getItem('__radar_api_session');
     if (cached) {
       const parsed = JSON.parse(cached);
-      // Solo sobreescribir si coincide con el usuario activo o si el storage no lo contradice
+
       Object.assign(apiSession, parsed);
     }
   } catch (e) { }
@@ -41,9 +36,6 @@
     window.dispatchEvent(new CustomEvent('RADAR_API_SESSION_UPDATED', { detail: { ...apiSession } }));
   }
 
-  // -------------------------------------------------------------------------
-  // Lista Unificada de Protección de Compañeros de Equipo (Ámbito Global IIFE)
-  // -------------------------------------------------------------------------
   const PROTECTED_TEAMMATES_NAMES = [
     'diego tacuri', 'dutandiego', 'diego tacu', '1073785',
     'gabriela moya', 'daniela moya',
@@ -61,7 +53,6 @@
     'aracely', 'yuquita', 'yusabeth', 'rodolfo', 'manrique'
   ];
 
-  // Regex con palabra completa obligatoria (\b) para nombres cortos para NUNCA coincidir con handles de leads (ej: nico_2808)
   const PROTECTED_TEAMMATES_REGEX = [
     /\bdiego\b/i,
     /\bnico\b/i,
@@ -101,7 +92,6 @@
       const pathMatch = window.location.pathname.match(/\/space\/([^/]+)/);
       if (pathMatch) apiSession.spaceId = pathMatch[1];
 
-      // 1. Obtener traits oficiales de Respond.io (ajs_user_traits)
       const ajsTraits = localStorage.getItem('ajs_user_traits');
       if (ajsTraits) {
         try {
@@ -113,7 +103,6 @@
         } catch (e) { }
       }
 
-      // 2. Fallback ajs_user_id
       const ajsUserId = localStorage.getItem('ajs_user_id');
       if (ajsUserId && !apiSession.userId) {
         try {
@@ -123,7 +112,6 @@
         }
       }
 
-      // 3. Obtener token directo de ID_TOKEN
       const idToken = localStorage.getItem('ID_TOKEN');
       if (idToken) {
         apiSession.token = `Bearer ${idToken}`;
@@ -139,7 +127,6 @@
           const val = st.getItem(key);
           if (!val || typeof val !== 'string') continue;
 
-          // 1. Búsqueda profunda de token JWT Bearer por regex si aún no se tiene
           if (!apiSession.token) {
             const jwtMatch = val.match(/eyJh[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+/);
             if (jwtMatch) {
@@ -153,7 +140,6 @@
             }
           }
 
-          // 2. Búsqueda de datos de usuario de Daniela o Diego Tacuri si faltara ID
           if (!apiSession.userId && (val.includes('Daniela Tacuri') || val.includes('Diego Tacuri'))) {
             try {
               const parsed = JSON.parse(val);
@@ -188,10 +174,6 @@
 
   scanLocalStorage();
 
-  // -------------------------------------------------------------------------
-  // Sniffer Transparente de Peticiones Network (fetch & XMLHttpRequest)
-  // -------------------------------------------------------------------------
-
   function extractHeaders(rawHeaders) {
     const res = {};
     if (!rawHeaders) return res;
@@ -209,7 +191,6 @@
     if (!url || typeof url !== 'string') return;
     const lowerUrl = url.toLowerCase();
 
-    // 1. Capturar Authorization header si está presente
     if (headers && headers['authorization']) {
       const auth = headers['authorization'];
       if (auth.startsWith('Bearer ') && auth !== apiSession.token) {
@@ -220,13 +201,11 @@
       }
     }
 
-    // 2. Extraer Space ID de la URL si aparece
     const spaceMatch = url.match(/\/space\/([^\/?#]+)/i);
     if (spaceMatch && spaceMatch[1]) {
       apiSession.spaceId = spaceMatch[1];
     }
 
-    // 3. Detectar ruta de Asignación de Cesionario (Assign)
     if (lowerUrl.includes('/assign') || lowerUrl.includes('/assignee') || lowerUrl.includes('assignconversation') || (body && typeof body === 'string' && (body.includes('assigneeId') || body.includes('AssignConversation') || body.includes('assignConversation')))) {
       apiSession.endpoints.assign = {
         url,
@@ -248,7 +227,6 @@
       persistSession();
     }
 
-    // 4. Detectar ruta de Asumir / Takeover del Bot
     if (lowerUrl.includes('/takeover') || lowerUrl.includes('/take-over') || lowerUrl.includes('/pause') || (body && typeof body === 'string' && (body.includes('takeover') || body.includes('take_over') || body.includes('pauseBot') || body.includes('PauseBot')))) {
       apiSession.endpoints.takeover = {
         url,
@@ -259,7 +237,6 @@
       persistSession();
     }
 
-    // 5. Detectar ruta de Envío de Mensaje
     if (lowerUrl.includes('/message') || lowerUrl.includes('/send') || lowerUrl.includes('sendmessage') || (body && typeof body === 'string' && (body.includes('SendMessage') || body.includes('sendMessage') || (body.includes('message') && body.includes('text'))))) {
       apiSession.endpoints.sendMessage = {
         url,
@@ -276,7 +253,6 @@
     }
   }
 
-  // Interceptar window.fetch
   const originalFetch = window.fetch;
   window.fetch = async function (resource, init) {
     try {
@@ -289,7 +265,6 @@
 
     const response = await originalFetch.apply(this, arguments);
 
-    // Analizar respuestas JSON relevantes en busca de datos de usuario (sin bloquear el flujo)
     try {
       const url = typeof resource === 'string' ? resource : (resource?.url || '');
       if (url.includes('/user') || url.includes('/me') || url.includes('/profile') || url.includes('/member')) {
@@ -303,7 +278,6 @@
     return response;
   };
 
-  // Interceptar XMLHttpRequest
   const originalXHROpen = XMLHttpRequest.prototype.open;
   const originalXHRSetHeader = XMLHttpRequest.prototype.setRequestHeader;
   const originalXHRSend = XMLHttpRequest.prototype.send;
@@ -329,10 +303,6 @@
     return originalXHRSend.apply(this, arguments);
   };
 
-  // -------------------------------------------------------------------------
-  // Intercepción WebSocket en Tiempo Real (wss://service.respond.io/socket/v2/ws)
-  // Sincronización Atómica Multi-Pestaña (CERO Mensajes Dobles)
-  // -------------------------------------------------------------------------
   const processedTakeoverIds = new Set();
   const recentReassigns = new Map();
   const crossTabLockChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('radar_king_cross_tab_lock') : null;
@@ -346,7 +316,7 @@
       if (existing) {
         const timestamp = parseInt(existing, 10);
         if (now - timestamp < 45000) {
-          return false; // Ya fue tomado por otra pestaña abierta
+          return false;
         }
       }
       localStorage.setItem(lockKey, String(now));
@@ -438,9 +408,6 @@
   window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
   window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
 
-  // -------------------------------------------------------------------------
-  // Gestión de Frases Clave de Autoría / Tracking (0ms)
-  // -------------------------------------------------------------------------
   let customTrackingPhrases = [];
   try {
     const rawP = localStorage.getItem('__radar_tracking_phrases');
@@ -461,9 +428,6 @@
     }
   });
 
-  // -------------------------------------------------------------------------
-  // Mensaje de Bienvenida del Auto-Apartador Flash
-  // -------------------------------------------------------------------------
   const DEFAULT_FLASH_GREETING = "Hola, cómo estás? De donde eres y qué edad tienes?";
   let currentFlashGreeting = DEFAULT_FLASH_GREETING;
   try {
@@ -483,9 +447,6 @@
     }
   });
 
-  // -------------------------------------------------------------------------
-  // Gestión de Palabras Clave de Campaña (Flash / Leads) (0ms)
-  // -------------------------------------------------------------------------
   const DEFAULT_FLASH_KEYWORDS_BRIDGE = ['KING', 'REY', 'SECRETO'];
   let flashTriggerKeywordsBridge = [...DEFAULT_FLASH_KEYWORDS_BRIDGE];
   try {
@@ -541,12 +502,10 @@
     const raw = String(text);
     const norm = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^[↙↗↖↘▲▼►◄\s]+/, '').trim();
 
-    // Exclusión estricta de marcas de comunidad ("fxkings", "fxking", etc.)
     if (/\bfx\s*[-_]?\s*(?:k+i+n+g+[s]?|r+e+y+[e]?s?|s+e+c+r+e+t+o+[s]?)\b/i.test(norm) || norm.includes('fxking') || norm.includes('fxkings')) {
       return false;
     }
 
-    // Coincidencia por emoji de corona 👑
     const isCrown = raw.includes('👑') && (norm.length <= 4 || /^[👑\s¡!¿?._-]+$/.test(raw));
     if (isCrown) return true;
 
@@ -570,16 +529,12 @@
     if (!rawData || typeof rawData !== 'string') return;
     try {
       const parsed = JSON.parse(rawData);
-      // Estructura de paquete Respond.io:
-      // { channel: "events.384258", name: "PlatformEvent", data: { type: "OnChatActivity", module: "messages", payload: { chatActivity: ... } } }
+
       const eventData = parsed.data || parsed;
       if (eventData?.type === 'OnChatActivity' || parsed.type === 'OnChatActivity') {
         const activity = eventData.payload?.chatActivity || eventData.chatActivity || parsed.payload?.chatActivity;
         if (!activity) return;
 
-        // 🛡️ GUARDIÁN ANTI-WORKFLOW 0ms POR SOCKET:
-        // Si el "Workflow fxking nuevos leads IA - CLONE" reasigna un King recién capturado a "Sales agent",
-        // contra-atacar en 0ms re-asignándolo de vuelta a Daniela Tacuri.
         const anyContactId = String(activity.contactId || activity.payload?.contactId || activity.conversationId || '');
         if (anyContactId && processedTakeoverIds.has(anyContactId)) {
           const actType = String(activity.type || '').toLowerCase();
@@ -629,7 +584,6 @@
           }
         }
 
-        // ⚡ Notificar mensajes salientes (DESACTIVADO automáticamente mientras corre el Auto-Apartador Flash)
         if (!isFlashApartadorActive && activity.traffic === 'outgoing' && activity.type === 'message') {
           const outContactId = activity.contactId || activity.payload?.contactId || activity.conversationId;
           if (outContactId) {
@@ -644,7 +598,6 @@
               }
             }));
 
-            // 🛡️ Blindaje por Frase Clave: Si Daniela envió su frase, reclamar el lead automáticamente
             if (matchesTrackingPhraseBridge(outText)) {
               console.log(`🛡️ [RespondRadar Phrase Tracker 0ms] ¡Frase de Dey enviada en chat ${outContactId}! Blindando lead...`);
               window.dispatchEvent(new CustomEvent('RADAR_PHRASE_MATCH_DETECTED', {
@@ -659,7 +612,6 @@
           }
         }
 
-        // Verificar si es un mensaje entrante nuevo
         if (activity.traffic === 'incoming' && activity.type === 'message') {
           const rawText = (activity.payload?.message?.text || activity.payload?.message?.content || activity.text || '').toLowerCase().trim();
           const contactId = activity.contactId || activity.payload?.contactId || activity.conversationId;
@@ -667,11 +619,6 @@
           const channel = activity.payload?.channel || activity.channel;
           const contactName = activity.contact?.name || activity.contact?.firstName || activity.sender?.name || `Lead #${contactId}`;
 
-          // -------------------------------------------------------------------
-          // ⚡ RASTREO REAL-TIME DE LEADS APARTADOS VÍA WEBSOCKET (0ms)
-          // Se pausa automáticamente cuando el Auto-Apartador Flash está activo
-          // para dedicar el 100% de prioridad al apartado de Kings sin interferencias
-          // -------------------------------------------------------------------
           if (!isFlashApartadorActive && contactId) {
             let msgText = activity.payload?.message?.text || activity.payload?.message?.content || activity.text || activity.payload?.text || '';
             if (!msgText) {
@@ -699,7 +646,6 @@
                 }
               }));
 
-              // 🛡️ Blindaje por Frase Clave: Si el lead citó o respondió con la frase de Dey
               if (matchesTrackingPhraseBridge(msgText)) {
                 console.log(`🛡️ [RespondRadar Phrase Tracker 0ms] ¡Frase de Dey recibida en chat ${contactId}! Blindando lead...`);
                 window.dispatchEvent(new CustomEvent('RADAR_PHRASE_MATCH_DETECTED', {
@@ -714,15 +660,11 @@
             }
           }
 
-          // Validar coincidencia de disparadores de campaña (King, Rey, Secreto y palabras configuradas)
           const isKingMatch = isFlashTriggerMatchBridge(rawText);
 
           if (isKingMatch && contactId) {
             console.log(`👑 [RespondRadar Socket 0ms] ¡LEAD DE CAMPAÑA DETECTADO! Contacto ID: ${contactId} | Nombre: "${contactName}" | Texto: "${rawText}"`);
 
-            // -------------------------------------------------------------------
-            // FILTROS DE SEGURIDAD ESTRICTA: Anti-Robo de Compañeros y Anti-Historial
-            // -------------------------------------------------------------------
             const myUserId = String(apiSession.userId || '76248775');
             const contactAssigneeId = String(
               activity.contact?.assigneeUserId ||
@@ -742,7 +684,6 @@
               ''
             ).toLowerCase().trim();
 
-            // 1. REGLA ESTRICTA MÁXIMA: Diego Tacuri (ID: 1073785) - ¡PROHIBIDO TOCAR!
             if (
               contactAssigneeId === '1073785' ||
               assigneeObjName.includes('diego tacuri') ||
@@ -754,13 +695,11 @@
               return;
             }
 
-            // 2. REGLA ESTRICTA DE COMPAÑERO: Si el cesionario coincide con algún compañero humano de la lista
             if (isTeammateCheck(assigneeObjName)) {
               console.log(`🛡️ [RespondRadar Socket] OMITIDO: Contacto ${contactId} (${contactName}) ya pertenece al compañero "${assigneeObjName}". ¡PROHIBIDO!`);
               return;
             }
 
-            // 3. REGLA UNIVERSAL: Si contactAssigneeId está asignado a CUALQUIER persona que NO sea Daniela ni Sales Agent
             const isBotOrSales = (
               assigneeObjName.includes('sales agent') ||
               assigneeObjName.includes('sales_agent') ||
@@ -778,19 +717,16 @@
               (assigneeObjName.includes('daniela') && !assigneeObjName.includes('moya'))
             );
 
-            // Si ya es nuestro, evitar reenviar saludo duplicado
             if (isMineAlready) {
               console.log(`🛡️ [RespondRadar Socket] OMITIDO: Contacto ${contactId} ya está asignado a nosotros. Evitando saludo duplicado.`);
               return;
             }
 
-            // Si NO está sin asignar y NO es bot/sales agent -> ES OTRO ASESOR HUMANO (cualquiera) -> PROHIBIDO TOCAR
             if (!isUnassigned && !isBotOrSales) {
               console.log(`🛡️ [RespondRadar Socket] OMITIDO: Contacto ${contactId} (${contactName}) asignado a asesor humano ("${assigneeObjName || contactAssigneeId}"). ¡PROHIBIDO ROBAR!`);
               return;
             }
 
-            // 3.1 REGLA ESTRICTA DE CONVERSACIONES CERRADAS PREVIAS (Anti-Robo de Contactos Reciclados)
             const convoStatus = (
               activity.conversation?.status ||
               activity.payload?.conversation?.status ||
@@ -810,7 +746,6 @@
               return;
             }
 
-            // 4. Verificar que el mensaje recibido sea reciente (enviado en los últimos 60 minutos)
             const msgTimestamp = activity.createdAt || activity.payload?.message?.createdAt;
             if (msgTimestamp) {
               const msgMs = parseTimestampMs(msgTimestamp);
@@ -823,7 +758,6 @@
               }
             }
 
-            // 5. Comprobar si el contacto es reciclado/antiguo confirmado (> 45 minutos)
             const contactCreatedAt = activity.contact?.createdAt || activity.payload?.contact?.createdAt || activity.conversation?.createdAt;
             if (contactCreatedAt) {
               const createdMs = parseTimestampMs(contactCreatedAt);
@@ -839,7 +773,6 @@
               }
             }
 
-            // 6. Verificación instantánea en el DOM del Sidebar (0ms en RAM)
             const cIdStr = String(contactId);
             const rawCards = Array.from(document.querySelectorAll('a.conversation-list--item, [data-pw="link-convo-item"]'));
             const matchingCard = rawCards.find(c => {
@@ -865,7 +798,6 @@
                 return;
               }
 
-              // Si la tarjeta indica mensaje saliente previo (↗)
               const hasOutgoingArrow = matchingCard.querySelector('[class*="outgoing"], [class*="arrow-up-right"]') || cardText.includes('↗');
               if (hasOutgoingArrow) {
                 console.log(`🛡️ [RespondRadar Socket Turbo] OMITIDO: Tarjeta en sidebar ya tiene respuestas salientes previas (↗).`);
@@ -873,11 +805,8 @@
               }
             }
 
-            // -------------------------------------------------------------------
-            // 🚀 MODO TURBO (0ms - 25ms): Disparo Inmediato por Red a Daniela Tacuri
-            // -------------------------------------------------------------------
             if (isFlashApartadorActive && !processedTakeoverIds.has(cIdStr)) {
-              // 🔒 Candado Atómico Multi-Pestaña: Si otra pestaña abierta ya lo tomó, abortar de inmediato
+
               if (!tryAcquireCrossTabKingLock(cIdStr)) {
                 console.log(`🛡️ [RespondRadar Multi-Pestaña] Contacto ${cIdStr} (${contactName}) ya fue reclamado por otra pestaña abierta. Bloqueando saludo duplicado.`);
                 processedTakeoverIds.add(cIdStr);
@@ -887,8 +816,6 @@
               processedTakeoverIds.add(cIdStr);
               const tSocketStart = performance.now();
 
-              // 🔒 CANDADO INMEDIATO DE DOBLE ENVÍO A FLASH_APARTADOR (T = 0ms)
-              // Bloquea al DOM antes de que comience cualquier petición HTTP
               window.dispatchEvent(new CustomEvent('RADAR_TURBO_LOCK_CONTACT', {
                 detail: { conversationId: cIdStr, name: contactName }
               }));
@@ -919,7 +846,7 @@
                   }));
                 } else {
                   console.warn(`⚠️ [RespondRadar Turbo] No se concretó apartado para ${cIdStr} (${result?.error || 'fallo'}).`);
-                  // Solo desbloquear si se abortó ANTES de disparar el saludo por red
+
                   if (!result?.attemptedSend) {
                     processedTakeoverIds.delete(cIdStr);
                     releaseCrossTabKingLock(cIdStr);
@@ -932,10 +859,10 @@
                   }
                 }
               }).catch(() => {
-                // En caso de excepción inesperada previa al envío
+
               });
             } else if (!isFlashApartadorActive) {
-              // Si Turbo está inactivo, notificar al escáner DOM tradicional
+
               window.dispatchEvent(new CustomEvent('RADAR_SOCKET_KING_DETECTED', {
                 detail: { contactId, name: contactName, text: rawText, contactChannelId, channel }
               }));
@@ -945,10 +872,6 @@
       }
     } catch (e) { }
   }
-
-  // -------------------------------------------------------------------------
-  // Despachador Flash por Red (Ultra Rápido 15ms - 35ms en Paralelo)
-  // -------------------------------------------------------------------------
 
   async function executeApiFlashTakeover({ conversationId, name, contactChannelId, channel, spaceId, greetingText, skipMessage = false }) {
     if (!conversationId) {
@@ -973,8 +896,6 @@
       'timezone': 'America/Bogota'
     };
 
-    // 🛡️ Pre-verificación Flash Anti-Robo y Anti-Conversaciones Cerradas (20ms)
-    // Comprueba el estado real del contacto en Respond.io antes de tocarlo
     try {
       const verifyRes = await originalFetch(`https://app.respond.io/api/v2/contact/${cIdStr}`, {
         method: 'GET',
@@ -995,7 +916,6 @@
           assigneeObj.email || ''
         ].join(' ').toLowerCase().trim();
 
-        // 1. Diego Tacuri (ID 1073785 o nombre) - ¡ESTRICTAMENTE PROHIBIDO!
         if (
           cAssigneeId === '1073785' ||
           cAssigneeName.includes('diego tacuri') ||
@@ -1009,7 +929,6 @@
           return { ok: false, error: 'Pertenece a Diego Tacuri' };
         }
 
-        // 2. Cualquier compañero del equipo humano protegido
         if (cAssigneeName && isTeammateCheck(cAssigneeName)) {
           console.warn(`🛡️ [RespondRadar API Turbo] BLOQUEADO: El contacto ${cIdStr} pertenece a compañero "${cAssigneeName}". ¡TAKEOVER ABORTADO!`);
           processedTakeoverIds.delete(cIdStr);
@@ -1017,7 +936,6 @@
           return { ok: false, error: `Pertenece a compañero ${cAssigneeName}` };
         }
 
-        // 3. Ya está asignado a nosotros (evitar saludo duplicado)
         const isMineAlready = (
           (userId && cAssigneeId === String(userId)) ||
           (apiSession.userName && cAssigneeName.includes(apiSession.userName.toLowerCase())) ||
@@ -1029,8 +947,6 @@
           return { ok: true, alreadyMine: true };
         }
 
-        // 4. Identificar si es un Bot / Sales Agent / Sin Asignar
-        // Respond.io asigna leads nuevos al bot Sales Agent (ID: 1073778 u otros)
         const KNOWN_BOT_IDS = ['1073778', '0', 'null', 'undefined', ''];
         const isBot = (
           KNOWN_BOT_IDS.includes(cAssigneeId) ||
@@ -1043,7 +959,6 @@
           !cAssigneeName
         );
 
-        // Si NO es bot, no es Daniela y tiene un asesor humano ajeno:
         if (cAssigneeId && !KNOWN_BOT_IDS.includes(cAssigneeId) && cAssigneeId !== String(userId) && !isBot) {
           console.warn(`🛡️ [RespondRadar API Turbo] BLOQUEADO: Contacto ${cIdStr} asignado a asesor humano ajeno (ID: ${cAssigneeId}, Nombre: "${cAssigneeName}"). ¡ABORTANDO!`);
           processedTakeoverIds.delete(cIdStr);
@@ -1051,7 +966,6 @@
           return { ok: false, error: 'Asignado a otro asesor' };
         }
 
-        // 5. Contacto no virgen (creado hace más de 45 minutos)
         const cCreated = contactData.createdAt || contactData.created_at || contactData.createdDate;
         if (cCreated) {
           const createdMs = parseTimestampMs(cCreated);
@@ -1069,7 +983,6 @@
           }
         }
 
-        // 6. Conversación previa o cerrada (anti-robo de leads antiguos reciclados)
         if (
           (contactData.conversationsCount && contactData.conversationsCount > 1) ||
           (contactData.conversationCount && contactData.conversationCount > 1) ||
@@ -1085,14 +998,12 @@
       console.log('ℹ️ [RespondRadar Turbo] Pre-verificación API:', e.message);
     }
 
-    // Asegurar candado inmediato a flash_apartador SOLO tras superar los filtros
     window.dispatchEvent(new CustomEvent('RADAR_TURBO_LOCK_CONTACT', {
       detail: { conversationId: cIdStr, name: name || '' }
     }));
 
     console.log(`⚡ [RespondRadar API Turbo 15ms] Asignando a Daniela Tacuri (ID: ${userId}) y enviando saludo único en chat ${cIdStr}...`);
 
-    // 1. Endpoint A: PUT /api/v2/contact/${conversationId}/assign (Asignar limpiamente a Daniela Tacuri)
     const assignUrl = `https://app.respond.io/api/v2/contact/${cIdStr}/assign`;
     const assignPromise = originalFetch(assignUrl, {
       method: 'PUT',
@@ -1101,7 +1012,6 @@
       body: JSON.stringify({ assigneeUserId: userId })
     }).then(r => r.ok).catch(() => false);
 
-    // 2. Endpoint B: POST /messaging/ajax/message/send (Enviar saludo instantáneo en paralelo directo en 0ms)
     let sendPromise = Promise.resolve(true);
     if (!skipMessage && greetingText !== false && GREETING) {
       const resolvedChannelId = contactChannelId ||
@@ -1143,7 +1053,6 @@
       }).then(r => r.ok).catch(() => false);
     }
 
-    // ⚡ Disparo y resolución simultánea en paralelo (15ms - 35ms)
     const [assignedOk, sentOk] = await Promise.all([assignPromise, sendPromise]);
 
     const results = {
@@ -1155,11 +1064,6 @@
     const overallOk = assignedOk || sentOk;
     console.log(`🚀 [RespondRadar API Takeover] Resultado para chat ${cIdStr}:`, results);
 
-    // -----------------------------------------------------------------------
-    // Bloqueo Anti-Workflow Seguro (Refuerzo de cesión a Daniela con Micro-Jitter)
-    // Re-afirma la cesión a Daniela Tacuri si el servidor de Respond.io ejecuta
-    // su workflow en segundo plano ("Workflow fxking nuevos leads IA") y reasigna a Sales Agent.
-    // -----------------------------------------------------------------------
     function scheduleAntiWorkflowLock(delayMs, waveNum) {
       const jitter = Math.floor(Math.random() * 40);
       setTimeout(async () => {
@@ -1172,14 +1076,11 @@
             body: JSON.stringify({ assigneeUserId: userId })
           }).catch(() => { });
 
-          // Si el chat está abierto en pantalla, disparar también clic en Takeover nativo
           window.dispatchEvent(new CustomEvent('RADAR_CLICK_TAKEOVER_MAIN'));
         } catch (e) { }
       }, delayMs + jitter);
     }
 
-    // 4 olas de blindaje de precisión (+1200ms, +2800ms, +4500ms y +6500ms)
-    // Cubren el ciclo completo de "Workflow fxking nuevos leads IA - CLONE" hasta después de "Workflow ended"
     scheduleAntiWorkflowLock(1200, 1);
     scheduleAntiWorkflowLock(2800, 2);
     scheduleAntiWorkflowLock(4500, 3);
@@ -1194,14 +1095,12 @@
     };
   }
 
-  // Escuchar evento despachado desde flash_apartador.js
   window.addEventListener('RADAR_EXEC_API_TAKEOVER', async (e) => {
     const detail = e.detail || {};
     const result = await executeApiFlashTakeover(detail);
     window.dispatchEvent(new CustomEvent('RADAR_API_TAKEOVER_RESULT', { detail: result }));
   });
 
-  // Forzar re-asignación manual para un chat específico desde la lista (100% LIMPIO, SIN TOCAR BOT-STATUS)
   window.addEventListener('RADAR_FORCE_REASSIGN', async (e) => {
     const detail = e.detail || {};
     const conversationId = detail.conversationId;
@@ -1210,7 +1109,7 @@
     const cIdStr = String(conversationId);
     const lastReassign = recentReassigns.get(cIdStr) || 0;
     if (Date.now() - lastReassign < 2000) {
-      return; // Debounce de 2 segundos para evitar ráfagas
+      return;
     }
     recentReassigns.set(cIdStr, Date.now());
 
@@ -1257,7 +1156,6 @@
     const aOk = await pAssign;
     console.log(`✅ [RespondRadar] Resultado re-asignación chat ${cIdStr}: Asignado=${aOk}`);
 
-    // Bloqueo Anti-Workflow Seguro: 1 ola única de refuerzo a los +1500ms para asegurar
     function scheduleAntiWorkflowLock(delayMs, waveNum) {
       setTimeout(async () => {
         try {
@@ -1279,14 +1177,10 @@
     }));
   });
 
-  // Responder a peticiones del estado de la sesión
   window.addEventListener('RADAR_REQUEST_API_SESSION', () => {
     window.dispatchEvent(new CustomEvent('RADAR_API_SESSION_UPDATED', { detail: { ...apiSession } }));
   });
 
-  // -------------------------------------------------------------------------
-  // Manipulación Directa de Quill y Envío en MAIN World
-  // -------------------------------------------------------------------------
   window.addEventListener('RADAR_PAGE_INSERT_TEXT', (e) => {
     try {
       const text = e.detail?.text;
@@ -1327,7 +1221,6 @@
     }
   });
 
-  // Disparo combinado instantáneo (0 ms) de texto + envío
   window.addEventListener('RADAR_TURBO_DISPATCH_GREETING', (e) => {
     try {
       const text = e.detail?.text || currentFlashGreeting || DEFAULT_FLASH_GREETING;
@@ -1353,10 +1246,9 @@
     }
   });
 
-  // Disparo nativo de clic en Takeover desde el contexto MAIN de la página
   window.addEventListener('RADAR_CLICK_TAKEOVER_MAIN', () => {
     try {
-      // 1. Coincidencia directa por selectores de atributos o texto
+
       const directCandidates = Array.from(document.querySelectorAll(
         'button, [role="button"], a.v-btn, a[class*="btn"], [data-pw*="takeover"], [data-testid*="takeover"], [data-pendo*="takeover"]'
       ));
@@ -1383,7 +1275,6 @@
         }
       }
 
-      // 2. Coincidencia dentro de banners de Sales Agent o Workflows
       const banners = Array.from(document.querySelectorAll('[class*="banner"], [class*="alert"], [class*="callout"], div[role="alert"]'));
       for (const b of banners) {
         if (b.closest('#respond-radar-widget, #radar-flash-hud')) continue;
@@ -1402,9 +1293,6 @@
     } catch (e) { }
   });
 
-  // -------------------------------------------------------------------------
-  // Control Directo de Bot en Respond.io (Bot Status ON / OFF vía PUT Oficial)
-  // -------------------------------------------------------------------------
   async function executeSetContactBotStatus({ conversationId, botStatus = false, spaceId }) {
     if (!conversationId) {
       return { ok: false, error: 'Falta conversationId' };
@@ -1430,7 +1318,6 @@
     let ok = false;
     let resStatus = null;
 
-    // 1. Endpoint oficial de Respond.io v2: PUT /api/v2/contact/bot-status
     try {
       const res = await originalFetch('https://app.respond.io/api/v2/contact/bot-status', {
         method: 'PUT',
@@ -1449,7 +1336,6 @@
       console.warn('⚠️ [RespondRadar] Error en PUT /api/v2/contact/bot-status:', e);
     }
 
-    // 2. Intentar payload alternativo si el primero no respondió 200
     if (!ok) {
       try {
         const resAlt = await originalFetch('https://app.respond.io/api/v2/contact/bot-status', {
@@ -1466,7 +1352,6 @@
       } catch (e) {}
     }
 
-    // 3. Fallback en endpoint general de contacto
     if (!ok) {
       try {
         const resContact = await originalFetch(`https://app.respond.io/api/v2/contact/${cIdStr}`, {
@@ -1479,7 +1364,6 @@
       } catch (e) {}
     }
 
-    // Notificar al contenido
     window.dispatchEvent(new CustomEvent('RADAR_SET_BOT_STATUS_RESULT', {
       detail: { conversationId: cIdStr, botStatus: targetVal, success: ok, status: resStatus }
     }));
@@ -1490,7 +1374,6 @@
     return { ok, conversationId: cIdStr, botStatus: targetVal };
   }
 
-  // Escuchar eventos despachados para cambiar bot status (Bot Off / Bot On)
   window.addEventListener('RADAR_EXEC_SET_BOT_STATUS', async (e) => {
     const detail = e.detail || {};
     await executeSetContactBotStatus(detail);
@@ -1501,14 +1384,9 @@
     await executeSetContactBotStatus({ conversationId: detail.conversationId, botStatus: false, spaceId: detail.spaceId });
   });
 
-  // Si ya tenemos credenciales detectadas, emitir inmediatamente
   if (apiSession.token) {
     persistSession();
   }
-
-  // -------------------------------------------------------------------------
-  // Consola de Comandos para el Usuario (DevTools)
-  // -------------------------------------------------------------------------
 
   console.log('%c⚡ [RespondRadar] Consola conectada (contexto top). Comandos disponibles:\n👉 RespondRadarBotOff("547237638")       - Apagar el bot (Bot Off) para un chat en 0ms\n👉 RespondRadarBotOn("547237638")        - Re-encender el bot (Bot On) para un chat\n👉 RespondRadarSimulateKingSocket("547237638") - Simular King entrante por WebSocket en 0ms\n👉 RespondRadarShowApiSession()  - Ver token y endpoints capturados de Respond.io\n👉 RespondRadarLearnVIPChats()   - Analizar y aprender de los 9 chats VIP\n👉 RespondRadarLearnActiveChat()  - Aprender del chat abierto en pantalla\n👉 RespondRadarCrawl(5)           - Rastrear chats de 5 días atrás\n👉 RespondRadarScan()             - Escanear estructura del DOM\n👉 RespondRadarStartFlashApartador() - Iniciar Auto-Apartador Flash', 'color: #38bdf8; font-weight: bold; font-size: 11px;');
 
@@ -1692,9 +1570,6 @@
     window.RespondRadarDump();
   });
 
-  // -------------------------------------------------------------------------
-  // Navegación SPA Suave en 0ms (Sin Recargar la Página)
-  // -------------------------------------------------------------------------
   window.addEventListener('RADAR_SPA_NAVIGATE', (e) => {
     const detail = e.detail || {};
     const conversationId = String(detail.conversationId || '');
@@ -1717,11 +1592,9 @@
     console.log(`🚀 [RespondRadar Bridge] Solicitud de navegación suave SPA a: ${targetPath}`);
     let success = false;
 
-    // 1. Intentar encontrar y usar Vue Router en el contexto de la aplicación
     try {
       let router = null;
 
-      // Buscar en el elemento raíz de Vue (#root o [data-v-app])
       const rootEl = document.querySelector('#root') || document.querySelector('[data-v-app]') || document.getElementById('app');
       const vueApp = rootEl?.__vue_app__;
 
@@ -1739,7 +1612,6 @@
         }
       }
 
-      // Si no se encontró en el root, buscar en componentes montados en el árbol DOM
       if (!router) {
         const candidateEls = [
           document.querySelector('.v-application'),
@@ -1771,7 +1643,6 @@
         }
       }
 
-      // Si encontramos Vue Router, usar router.push() nativo
       if (router && typeof router.push === 'function') {
         console.log('⚡ [RespondRadar Bridge] Vue Router detectado. Ejecutando router.push nativo...');
         router.push(targetPath).then(() => {
@@ -1785,7 +1656,6 @@
       console.warn('⚠️ [RespondRadar Bridge] Error intentando Vue Router:', err);
     }
 
-    // 2. Si no fue posible con Vue Router directo, utilizar History API con PopState
     if (!success && targetPath) {
       try {
         if (window.location.pathname !== targetPath) {
@@ -1801,7 +1671,6 @@
       }
     }
 
-    // 3. Notificar resultado a content script
     window.dispatchEvent(new CustomEvent('RADAR_SPA_NAVIGATE_RESULT', {
       detail: { conversationId, path: targetPath, success }
     }));

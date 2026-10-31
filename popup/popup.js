@@ -1,16 +1,15 @@
-// Popup Logic for RespondRadar Standalone - Monitor & Ventas
+
 
 let watchedLeads = {};
 let currentTabChat = null;
 let isSoundEnabled = true;
 let isWidgetHidden = false;
 let searchQuery = '';
-let currentFilter = 'mine'; // 'mine', 'sold', 'all'
-let currentPeriod = 'all'; // 'all', 'today', 'yesterday', 'week'
-let currentSubFilter = 'all'; // 'all', 'tocar-hoy', '150', 'registro', 'fondeo', 'ingresando', 'revision', 'final', 'followup'
+let currentFilter = 'mine';
+let currentPeriod = 'all';
+let currentSubFilter = 'all';
 
-// Sales & Commission State (Filtro por Mes y Ganancia Personal)
-let selectedSalesMonth = 'current'; // 'current', 'all', or 'YYYY-MM'
+let selectedSalesMonth = 'current';
 let commissionConfig = {
   starter: 10,
   pro: 20,
@@ -57,7 +56,6 @@ function formatMonthLabel(monthKey) {
   return `${name} ${year}`;
 }
 
-// Active modal state
 let activeModalLeadId = null;
 let selectedPlan = 'Pro';
 let selectedPaymentMode = 'abono';
@@ -74,7 +72,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   render();
 });
 
-// Load storage
 async function initData() {
   const data = await chrome.storage.local.get([
     'watchedLeads',
@@ -102,7 +99,6 @@ async function initData() {
   }
 }
 
-// Check if user is currently looking at a Respond.io conversation
 async function detectActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const bannerName = document.getElementById('current-tab-lead-name');
@@ -184,7 +180,6 @@ async function detectActiveTab() {
   }
 }
 
-// Add lead to watchlist with targetPlan
 async function addLead({ spaceId, conversationId, name, url }, { targetPlan = 'Pro' } = {}) {
   const dData = await chrome.storage.local.get(['dismissedLeads']);
   const dismissedLeads = dData.dismissedLeads || {};
@@ -218,7 +213,6 @@ async function addLead({ spaceId, conversationId, name, url }, { targetPlan = 'P
   render();
 }
 
-// Remove lead
 async function removeLead(conversationId) {
   delete watchedLeads[conversationId];
   const dData = await chrome.storage.local.get(['dismissedLeads']);
@@ -230,7 +224,6 @@ async function removeLead(conversationId) {
   render();
 }
 
-// Stage slug helper for styling
 function getStageSlug(stage) {
   if (!stage) return '';
   const s = String(stage).toLowerCase();
@@ -244,7 +237,6 @@ function getStageSlug(stage) {
   return 'custom';
 }
 
-// Change lead target plan (Starter, Pro, Black)
 async function setLeadPlan(conversationId, plan) {
   if (watchedLeads[conversationId]) {
     watchedLeads[conversationId].targetPlan = plan;
@@ -253,7 +245,6 @@ async function setLeadPlan(conversationId, plan) {
   }
 }
 
-// Change lead process stage (150 ✅, En registro, En fondeo, Ingresando, En revisión, Final)
 async function setLeadStage(conversationId, stage) {
   if (watchedLeads[conversationId]) {
     if (watchedLeads[conversationId].processStage === stage) {
@@ -266,7 +257,6 @@ async function setLeadStage(conversationId, stage) {
   }
 }
 
-// Utilidades para Fecha Promesa / Seguimiento en Popup
 function getQuickFollowUpDate(type) {
   const now = new Date();
   const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -358,7 +348,6 @@ async function clearLeadFollowUp(conversationId) {
   }
 }
 
-// Excluir o reactivar lead en "Tocar Hoy (+24h)" (para los que ya se les hizo follow)
 async function toggleExcludeTouchLead(conversationId) {
   if (!watchedLeads[conversationId]) return;
   const lead = watchedLeads[conversationId];
@@ -382,7 +371,6 @@ function isOutgoingSnippet(snippet) {
   return snippet.includes('↗') || snippet.startsWith('You:') || snippet.startsWith('Tú:');
 }
 
-// Detección de Agendados Sin Respuesta en +24 Horas ("Tocar Hoy")
 function isLeadScheduledSilentOver24h(lead) {
   if (!lead) return false;
   const isSold = lead.sale && lead.sale.isSold;
@@ -449,7 +437,6 @@ function getSilentTimeLabel(lead) {
   return `${diffDays}d sin respuesta`;
 }
 
-// Navigate to chat
 async function openChat(lead) {
   const targetUrl = lead.url || `https://app.respond.io/space/${lead.spaceId || '384258'}/inbox/${lead.conversationId}`;
 
@@ -493,7 +480,6 @@ async function openChat(lead) {
   window.close();
 }
 
-// Mark single lead as read
 async function markLeadAsRead(conversationId) {
   if (watchedLeads[conversationId]) {
     watchedLeads[conversationId].unreadCount = 0;
@@ -503,7 +489,6 @@ async function markLeadAsRead(conversationId) {
   }
 }
 
-// Mark all leads as read
 async function markAllAsRead() {
   let changed = false;
   for (const id in watchedLeads) {
@@ -519,7 +504,6 @@ async function markAllAsRead() {
   }
 }
 
-// Export backup as downloadable JSON file
 function exportBackup() {
   const dataStr = JSON.stringify(watchedLeads, null, 2);
   const blob = new Blob([dataStr], { type: 'application/json' });
@@ -531,7 +515,6 @@ function exportBackup() {
   URL.revokeObjectURL(url);
 }
 
-// Import backup from JSON file
 function setupBackupHandlers() {
   const btnExport = document.getElementById('btn-export-backup');
   const btnImport = document.getElementById('btn-import-backup');
@@ -569,7 +552,6 @@ function setupBackupHandlers() {
   });
 }
 
-// Setup inputs and controls
 function setupEventListeners() {
   const searchInput = document.getElementById('lead-search-input');
   searchInput?.addEventListener('input', (e) => {
@@ -577,7 +559,6 @@ function setupEventListeners() {
     render();
   });
 
-  // Filter tabs (Mis Leads, Ventas, Todos)
   const tabBtns = document.querySelectorAll('.filter-tabs-bar .tab-btn');
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -588,7 +569,6 @@ function setupEventListeners() {
     });
   });
 
-  // Pipeline & Seguimiento Sub-tabs
   const subtabBtns = document.querySelectorAll('.pipeline-subtabs-bar .subtab-btn');
   subtabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -605,7 +585,6 @@ function setupEventListeners() {
     });
   });
 
-  // Period / Day filter buttons (Hoy, Ayer, Esta semana, Todos)
   const periodBtns = document.querySelectorAll('.period-btn, .period-pill');
   periodBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -616,7 +595,6 @@ function setupEventListeners() {
     });
   });
 
-  // Banner popover clicks
   document.querySelectorAll('.btn-popover-pill').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -627,7 +605,6 @@ function setupEventListeners() {
     });
   });
 
-  // Outside click closes banner popover and lead action menus
   document.addEventListener('click', (e) => {
     const popover = document.getElementById('banner-follow-popover');
     const btnAdd = document.getElementById('btn-add-current');
@@ -675,9 +652,6 @@ function setupEventListeners() {
   updateKeyboardNavUI();
 }
 
-// -------------------------------------------------------------
-// Vistas Segmentadas (Leads, Ventas, Ajustes)
-// -------------------------------------------------------------
 let currentView = 'leads';
 
 function setupViewNavigation() {
@@ -698,11 +672,8 @@ function setupViewNavigation() {
   });
 }
 
-// -------------------------------------------------------------
-// Pestaña de Ajustes: Comisiones, Precios, Palabras Flash, Saludo
-// -------------------------------------------------------------
 async function setupSettingsTab() {
-  // Configuración de Comisiones (Ganancia Personal)
+
   const commStarterInput = document.getElementById('comm-starter-val');
   const commProInput = document.getElementById('comm-pro-val');
   const commBlackInput = document.getElementById('comm-black-val');
@@ -761,7 +732,6 @@ async function setupSettingsTab() {
     await saveCommissions();
   });
 
-  // Configuración de Precios de Venta de los Planes
   const planStarterInput = document.getElementById('plan-price-starter-val');
   const planProInput = document.getElementById('plan-price-pro-val');
   const planBlackInput = document.getElementById('plan-price-black-val');
@@ -819,7 +789,6 @@ async function setupSettingsTab() {
     await savePlanPrices();
   });
 
-  // Palabras Clave de Campaña (Auto-Apartador Flash)
   const keywordsInput = document.getElementById('flash-keywords-input');
   const btnSaveKeywords = document.getElementById('btn-save-flash-keywords');
   const btnResetKeywords = document.getElementById('btn-reset-flash-keywords');
@@ -867,7 +836,6 @@ async function setupSettingsTab() {
     }
   });
 
-  // Mensaje de Bienvenida del Auto-Apartador Flash
   const greetingInput = document.getElementById('flash-greeting-input');
   const btnSaveGreeting = document.getElementById('btn-save-flash-greeting');
   const btnResetGreeting = document.getElementById('btn-reset-flash-greeting');
@@ -916,9 +884,6 @@ async function setupSettingsTab() {
   });
 }
 
-// -------------------------------------------------------------
-// Filtro Dinámico de Meses de Ventas
-// -------------------------------------------------------------
 function setupSalesPeriodFilter() {
   const monthSelect = document.getElementById('sales-month-select');
   const pillMonth = document.getElementById('sales-pill-month');
@@ -1059,7 +1024,7 @@ function getDayCategory(date) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today.getTime() - 86400000);
-  
+
   const dayOfWeek = (now.getDay() + 6) % 7;
   const startOfWeek = new Date(today.getTime() - dayOfWeek * 86400000);
 
@@ -1084,7 +1049,6 @@ function formatLeadDateTag(date) {
   return `<span class="lead-date-tag is-older" title="Asignado el ${dayMonth} a las ${timeStr}">${calIcon}<span>${dayMonth}</span></span>`;
 }
 
-// Simplified Sales Modal Logic
 function setupModalEventListeners() {
   const modal = document.getElementById('sale-modal');
   const btnClose = document.getElementById('modal-close-btn');
@@ -1221,7 +1185,6 @@ function closeSaleModal() {
   activeModalLeadId = null;
 }
 
-// Main Render Function
 function render() {
   const listEl = document.getElementById('leads-list');
   const emptyState = document.getElementById('empty-state');
@@ -1273,7 +1236,6 @@ function render() {
     }
     totalUnread += (l.unreadCount || 0);
 
-    // Sales metrics for selected month
     if (isSold) {
       const leadMonthKey = getLeadMonthKey(l);
       const curMonthKey = getCurrentMonthKey();
@@ -1300,7 +1262,6 @@ function render() {
       }
     }
 
-    // Period breakdown for current tab
     let matchesCurrentTab = true;
     if (currentFilter === 'mine' && isSold) matchesCurrentTab = false;
     else if (currentFilter === 'sold' && !isSold) matchesCurrentTab = false;
@@ -1394,7 +1355,6 @@ function render() {
     btnMarkAll.classList.toggle('hidden', totalUnread === 0);
   }
 
-  // Pipeline Sub-Filter Counts
   let subCountAll = 0;
   let subCountTocarHoy = 0;
   let subCount150 = 0;
@@ -1450,7 +1410,6 @@ function render() {
     subtabsBar.style.display = (currentFilter === 'mine') ? 'flex' : 'none';
   }
 
-  // Filter leads
   const filtered = leadEntries.filter(l => {
     const isSold = l.sale && l.sale.isSold;
 
@@ -1661,7 +1620,7 @@ function render() {
               <span class="unread-badge">${lead.unreadCount}</span>
             ` : ''}
             ${!isSold && (currentSubFilter === 'tocar-hoy' || isLeadScheduledSilentOver24h(lead) || lead.touchExcludedAt) ? `
-              <button type="button" class="btn-card-exclude ${lead.touchExcludedAt ? 'is-excluded' : ''}" 
+              <button type="button" class="btn-card-exclude ${lead.touchExcludedAt ? 'is-excluded' : ''}"
                       title="${lead.touchExcludedAt ? 'Reactivar en Tocar Hoy (+24h)' : 'Ya le hice follow / Excluir de Tocar Hoy (reaparece si contesta)'}">
                 ${lead.touchExcludedAt ? (window.RadarIcons?.render('bell', 11) + ' <span>Reactivar</span>') : (window.RadarIcons?.render('bellOff', 11) + ' <span>Excluir</span>')}
               </button>
@@ -1673,7 +1632,7 @@ function render() {
             <button type="button" class="btn-card-menu" title="Opciones (Venta, Etapas, Eliminar)">
               ${window.RadarIcons?.render('moreHorizontal', 13) || '⋯'}
             </button>
-            
+
             <div class="lead-menu-dropdown hidden">
               ${!isSold ? `
                 <div class="menu-section-title">Plan apartado:</div>
@@ -1987,7 +1946,6 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Auto refresh if storage changes in background
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local') {
     if (changes.watchedLeads) {

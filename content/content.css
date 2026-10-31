@@ -1,4 +1,3 @@
-/* RespondRadar - Injected UI Styles */
 
 #respond-radar-widget {
   position: fixed;
@@ -104,7 +103,6 @@
   transform: scale(1.03);
 }
 
-/* In-Page Minimalist Pill & Overflow Menu */
 .radar-inpage-pill {
   display: inline-flex;
   align-items: center;
@@ -245,16 +243,11 @@
   color: #fff;
 }
 
-/* Global Vector Lucide Icon Alignment */
 .radar-svg-icon {
   display: inline-block !important;
   vertical-align: middle !important;
   flex-shrink: 0 !important;
 }
-
-/* ========================================================= */
-/* Floating Dropdown Menu: Identidad Unificada Cyber-Dark     */
-/* ========================================================= */
 
 .radar-floating-menu {
   position: absolute;
@@ -279,7 +272,6 @@
   overflow-y: auto !important;
 }
 
-/* Header del Menú */
 .rf-header {
   display: flex;
   align-items: center;
@@ -380,7 +372,6 @@
   color: #fff;
 }
 
-/* Navegación por Pestañas Segmentadas (Estilo exacto de nav-segmented del popup) */
 .rf-nav-tabs {
   display: flex;
   background: #0b0f17;
@@ -431,7 +422,6 @@
   font-weight: 700;
 }
 
-/* Contenido de Pestañas */
 .rf-tab-content {
   display: none;
   flex-direction: column;
@@ -442,7 +432,6 @@
   display: flex;
 }
 
-/* Tarjetas Modulares */
 .rf-module-card {
   background: transparent;
   border: none;
@@ -489,7 +478,6 @@
   margin: 3px 0;
 }
 
-/* Selector de Planes */
 .rf-plan-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -538,7 +526,6 @@
   font-weight: 700;
 }
 
-/* Selector de Etapas */
 .rf-stage-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -637,7 +624,6 @@
   font-weight: 700;
 }
 
-/* Módulo de Fecha de Dinero / Seguimiento */
 .rf-followup-card {
   border-color: rgba(245, 158, 11, 0.18);
   background: rgba(245, 158, 11, 0.025);
@@ -780,7 +766,6 @@
   color: #000;
 }
 
-/* Acciones Principales */
 .rf-actions-card {
   gap: 6px;
 }
@@ -822,7 +807,6 @@
   color: #ffffff !important;
 }
 
-/* Tarjeta Resumen de Venta Cerrada */
 .rf-sale-summary-card {
   background: linear-gradient(135deg, rgba(30, 27, 75, 0.6), rgba(15, 23, 42, 0.85)) !important;
   border: 1px solid rgba(234, 179, 8, 0.45) !important;
@@ -909,7 +893,6 @@
   color: #fecaca;
 }
 
-/* Tab 2: Reasignar Asesor */
 .rf-team-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -948,7 +931,6 @@
   font-weight: 700;
 }
 
-/* Tab 3: Herramientas Radar */
 .rf-tools-list {
   display: flex;
   flex-direction: column;
@@ -992,7 +974,6 @@
   color: #94a3b8;
 }
 
-/* Botón Desactivar IA / Sales Agent */
 .rf-btn-stop-ai {
   background: rgba(244, 63, 94, 0.08) !important;
   border: 1px solid rgba(244, 63, 94, 0.3) !important;
@@ -1032,7 +1013,6 @@
   color: #ffffff;
 }
 
-/* Botones Rápidos en el Header Pill */
 .radar-pill-stage-btn {
   display: inline-flex;
   align-items: center;
@@ -1108,7 +1088,6 @@
   font-weight: 800;
 }
 
-/* Botón Rápido de Fecha Dinero en el Header Pill */
 .radar-pill-followup-btn {
   display: inline-flex;
   align-items: center;
@@ -1154,7 +1133,6 @@
   color: #fde047;
 }
 
-/* Alerta Urgente en la lista de chats del Sidebar */
 .radar-chat-badge.has-urgent-followup {
   border-color: #ef4444 !important;
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
@@ -1167,7 +1145,6 @@
   100% { transform: scale(1); }
 }
 
-/* Compact Pill Legacy Support */
 .radar-pill-compact {
   display: inline-flex;
   align-items: center;
@@ -1280,7 +1257,6 @@
   transform: scale(1.1);
 }
 
-/* Expanded Controls Bar */
 .radar-expanded-bar {
   display: flex;
   align-items: center;
@@ -1402,7 +1378,6 @@
   color: #ffffff;
 }
 
-/* Follow Popover (Cyber-Dark Obsidian & Electric Cyan — Gemelo del Popup) */
 .radar-popover {
   position: absolute;
   top: calc(100% + 8px);
@@ -1424,7 +1399,6 @@
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Stack de Planes a Apartar (Diseño gemelo a las tarjetas lead-card del popup) */
 .rf-popover-plans-stack {
   display: flex;
   flex-direction: column;
@@ -1483,7 +1457,6 @@
   font-weight: 500;
 }
 
-/* Botón 'Apartar ⚡' — Idéntico a .btn-card-open del popup */
 .rf-popover-plan-card .rf-plan-badge {
   display: inline-flex;
   align-items: center;
@@ -1507,7 +1480,6 @@
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
 }
 
-/* Variantes de Plan */
 .rf-popover-plan-card.plan-starter:hover {
   border-color: rgba(245, 158, 11, 0.5);
 }
@@ -1560,7 +1532,6 @@
   font-weight: 600;
 }
 
-/* In-Page Toast Notification (cuando estás con la pestaña enfocada) */
 .radar-toast-container {
   position: fixed;
   top: 24px;
@@ -1773,7 +1744,6 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* In-Page Sale Modal */
 .radar-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1913,7 +1883,6 @@
   background: #16a34a;
 }
 
-/* In-Chat List Badges for Leads (Respond.io Sidebar) */
 .radar-has-badge {
   display: flex !important;
   align-items: center !important;
@@ -2055,10 +2024,6 @@
   color: #fbcfe8 !important;
   box-shadow: 0 0 8px rgba(236, 72, 153, 0.35) !important;
 }
-
-/* ========================================================= */
-/* Radar DOM Scan Inspector Modal & Button                   */
-/* ========================================================= */
 
 .radar-btn-scan-mini {
   background: rgba(56, 189, 248, 0.15) !important;
@@ -2242,10 +2207,6 @@
   box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
 }
 
-/* ========================================================= */
-/* Radar Crawl 3 Days Modal & Toast                          */
-/* ========================================================= */
-
 .radar-crawl-highlight-card {
   background: linear-gradient(135deg, rgba(6, 78, 59, 0.6), rgba(15, 23, 42, 0.9));
   border: 1px solid rgba(16, 185, 129, 0.6);
@@ -2350,10 +2311,6 @@
   color: #f8fafc;
   font-weight: 600;
 }
-
-/* ========================================================= */
-/* Radar Sales Copilot HUD & AI Suggestion Box               */
-/* ========================================================= */
 
 .radar-copilot-hud {
   position: fixed;
@@ -2472,10 +2429,6 @@
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
 }
 
-/* ========================================================= */
-/* Radar Composer AI Badge (Disponible en Todos los Chats)   */
-/* ========================================================= */
-
 .radar-composer-ai-badge {
   position: absolute;
   top: -28px;
@@ -2526,7 +2479,6 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Apartar Lead Button & Animations */
 .radar-btn-apartar {
   background: linear-gradient(135deg, #059669, #10b981) !important;
   color: #ffffff !important;
@@ -2553,9 +2505,6 @@
   transform: translateY(0) scale(0.98) !important;
 }
 
-/* =========================================================================
-   RespondRadar Flash HUD — Linear Pure Slate (Solid, High-Contrast SaaS)
-   ========================================================================= */
 .radar-flash-hud {
   position: fixed;
   top: 18px;
@@ -2849,9 +2798,6 @@
   color: #ffffff;
 }
 
-/* =========================================================================
-   Modal de Resumen de Leads Apartados — Linear Pure Slate
-   ========================================================================= */
 .radar-apartados-modal-overlay {
   position: fixed;
   inset: 0;
@@ -3235,5 +3181,4 @@
   border-color: #475569;
   color: #ffffff;
 }
-
 

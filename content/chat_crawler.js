@@ -1,10 +1,4 @@
-// RespondRadar - Módulo 4: Rastreador de Chats, Análisis de Mensajes y Burbujas
-// content/chat_crawler.js
-
-// -------------------------------------------------------------------------
-// Obtención y Análisis de Tarjetas del Sidebar Izquierdo
-// -------------------------------------------------------------------------
-
+// RespondRadar - Módulo 4
 function getInboxCards() {
   const selectors = [
     'a[href*="/inbox/"]',
@@ -130,7 +124,6 @@ function analyzeInboxCard(card) {
 
   let owner = 'Desconocido';
 
-  // 1. Detección precisa en el contenedor de Cesionario de la tarjeta (Respond.io estándar)
   const assigneeEl = card.querySelector('[data-pw="messages-conversation-item-assignee"]');
   const assigneeAttrs = assigneeEl ? [
     assigneeEl.getAttribute('title') || '',
@@ -145,7 +138,7 @@ function analyzeInboxCard(card) {
 
   if (assigneeEl) {
     if (assigneeEl.querySelector('.icon-custom-user-square-bold, [class*="custom-user"]')) {
-      owner = 'Sales Agent'; // Icono cuadrado estándar para bot Sales Agent / Sin asignar
+      owner = 'Sales Agent';
     } else {
       if (
         assigneeAttrs.includes('daniela tacuri') ||
@@ -180,7 +173,6 @@ function analyzeInboxCard(card) {
     }
   }
 
-  // 2. Si aún es desconocido, buscar solo en menciones explícitas de asignación (NUNCA en el nombre del contacto)
   if (owner === 'Desconocido') {
     const textWithoutName = (card.innerText || '').replace(name, '').toLowerCase();
     if (
@@ -243,7 +235,6 @@ function isFlashRunningNow() {
 }
 
 function updateChatListBadges() {
-  // Pausar mutación de insignias mientras corre el Auto-Apartador Flash para cero interferencia DOM
   if (isFlashRunningNow()) return;
 
   const cards = document.querySelectorAll('a.conversation-list--item, a[href*="/inbox/"], [data-pw="link-convo-item"]');
@@ -383,12 +374,11 @@ function updateChatListBadges() {
 }
 
 const CRAWLER_START_TIME = Date.now();
-const CRAWLER_WARMUP_MS = 4500; // 4.5s de gracia al cargar pestaña para evitar explosión de alertas
+const CRAWLER_WARMUP_MS = 4500;
 let lastGlobalAlertSoundTime = 0;
 const lastSocketNotifyMap = new Map();
 
 function scanInboxSidebar() {
-  // Pausar rastreo de sidebar, frases y notificaciones de leads mientras corre el Auto-Apartador Flash
   if (isFlashRunningNow()) return;
 
   updateChatListBadges();
@@ -444,11 +434,9 @@ function scanInboxSidebar() {
       }
     }
 
-    // Trackear silenciosamente (sin etiquetar como ⭐ Dey) si la tarjeta contiene la frase clave
     if (typeof matchesTrackingPhrase === 'function') {
       const cardRawText = card.innerText || '';
       if (matchesTrackingPhrase(cardRawText)) {
-        // Si había quedado etiquetado como 'mine' por la versión anterior sin apartado manual, limpiarlo
         const existingWatched = watchedLeads[cardConvId];
         if (
           existingWatched &&
@@ -561,11 +549,8 @@ function scanInboxSidebar() {
           }
           markLeadChanged();
 
-          // Filtro inteligente de notificaciones:
-          // 1. Descartar si el lead está silenciado manualmente (muted)
           const isMuted = !!lead.muted || (lead.mutedUntil && Date.now() < lead.mutedUntil);
 
-          // 2. Descartar si el lead tiene fecha de promesa de pago futura (seguimiento pactado)
           const hasFutureFollowUp = (() => {
             if (!lead.followUpDate) return false;
             const now = new Date();
@@ -573,7 +558,6 @@ function scanInboxSidebar() {
             return lead.followUpDate > todayStr;
           })();
 
-          // 3. Descartar si el mensaje es antiguo (Saturday, Tuesday, Yesterday, Oct 19, etc.)
           const timeEl = card.querySelector('time, [class*="time"], [data-pw*="time"], [class*="date"]');
           const timeText = (timeEl?.innerText || (typeof extractCardTime === 'function' ? extractCardTime(cardText) : '') || '').toLowerCase().trim();
           const isRecent = typeof isRecentMessageTimestamp === 'function' ? isRecentMessageTimestamp(timeText) : true;
@@ -760,13 +744,7 @@ function bindAssignmentsToDom(assignments) {
   }
 }
 
-// -------------------------------------------------------------------------
-// Rastrear en Tiempo Real Mensajes de Leads Apartados vía WebSocket (0ms)
-// Funciona en cualquier pestaña de Respond.io ("Mine", "Unassigned", etc.) y en segundo plano
-// -------------------------------------------------------------------------
-
 window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
-  // Pausar mientras el Auto-Apartador Flash está activo
   if (isFlashRunningNow()) return;
 
   const detail = e.detail;
@@ -777,14 +755,12 @@ window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
   const isPhraseTracked = !isWatched && !!phraseTrackedLeads[conversationId];
   const lead = isWatched ? watchedLeads[conversationId] : phraseTrackedLeads[conversationId];
 
-  // Si no es un lead apartado ni trackeado por frase clave, ignorar
   if (!lead) return;
 
   const currentInfo = parseCurrentUrl();
   const isAppFocused = typeof document !== 'undefined' && document.hasFocus() && !document.hidden;
   const isCurrentActiveChat = currentInfo.conversationId === conversationId && isAppFocused;
 
-  // 1. Mensaje Saliente (enviado por Daniela/nosotros desde este u otro dispositivo)
   if (detail.traffic === 'outgoing') {
     const outSnippet = detail.text ? (detail.text.startsWith('Tú:') ? detail.text : `Tú: ${detail.text}`) : lead.lastMessage;
     lead.lastMessage = outSnippet.slice(0, 120);
@@ -804,17 +780,14 @@ window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
     return;
   }
 
-  // 2. Mensaje Entrante del Lead Apartado o Trackeado por Frase
   if (detail.traffic === 'incoming') {
     const rawSnippet = (detail.text || 'Nuevo mensaje').trim();
     const snippet = rawSnippet.slice(0, 120);
 
-    // Debounce de seguridad: evitar duplicar notificaciones en ráfagas de sockets idénticos (< 2.5s)
     const now = Date.now();
     const lastNotify = lastSocketNotifyMap.get(conversationId) || 0;
     const isDuplicateBurst = (lead.lastMessage === snippet && (now - lastNotify < 2500));
 
-    // Si viene nombre nuevo desde el socket y el lead no tenía o tenía "tmp_", actualizar
     if (detail.name && (!lead.name || lead.name.startsWith('tmp_') || lead.name.startsWith('Lead #'))) {
       lead.name = detail.name;
     }
@@ -833,7 +806,6 @@ window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
       lead.unreadCount = 0;
     }
 
-    // Si el lead tenía "Follow hecho", reactivarlo en Tocar Hoy porque volvió a escribir
     if (lead.touchExcludedAt) {
       delete lead.touchExcludedAt;
       delete lead.touchExcludedMsgTime;
@@ -852,7 +824,6 @@ window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
     if (isDuplicateBurst) return;
     lastSocketNotifyMap.set(conversationId, now);
 
-    // Filtros inteligentes de notificación
     const isMuted = !!lead.muted || (lead.mutedUntil && Date.now() < lead.mutedUntil);
     const hasFutureFollowUp = (() => {
       if (!lead.followUpDate) return false;
@@ -892,12 +863,7 @@ window.addEventListener('RADAR_SOCKET_CHAT_ACTIVITY', async (e) => {
   }
 });
 
-// -------------------------------------------------------------------------
-// Rastreo Silencioso por Frase Clave (Sin etiquetar como ⭐ Dey)
-// -------------------------------------------------------------------------
-
 window.addEventListener('RADAR_PHRASE_MATCH_DETECTED', async (e) => {
-  // Pausar mientras el Auto-Apartador Flash está activo
   if (isFlashRunningNow()) return;
 
   const detail = e.detail;
@@ -905,7 +871,6 @@ window.addEventListener('RADAR_PHRASE_MATCH_DETECTED', async (e) => {
 
   const conversationId = String(detail.conversationId);
 
-  // Si ya lo tenemos apartado manualmente en watchedLeads, ya cuenta con seguimiento
   if (watchedLeads[conversationId]) return;
 
   const currentInfo = parseCurrentUrl();
@@ -931,10 +896,6 @@ window.addEventListener('RADAR_PHRASE_MATCH_DETECTED', async (e) => {
 
   await safeStorageSet({ phraseTrackedLeads });
 });
-
-// -------------------------------------------------------------------------
-// Desplazamiento Virtual y Auto-Scroll Crawler de Historial
-// -------------------------------------------------------------------------
 
 async function advanceInboxScroll(container) {
   const cards = getInboxCards();
@@ -1030,7 +991,6 @@ function showCrawlProgressToast(msg) {
   }
 
   const iconSvg = window.RadarIcons?.render(iconName, 14, `radar-toast-svg-icon ${iconClass}`) || '';
-  // Limpiar emojis crudos al inicio para evitar duplicados en pantalla (ej: rayo doble ⚡ ⚡)
   const cleanMsg = rawMsg.replace(/^[⚡🛑⏳📜🧠🎉✅⚠️✨👉\s]+/, '').trim();
 
   t.innerHTML = `
@@ -1306,16 +1266,11 @@ async function crawlInboxHistory(targetDays = 5) {
     allChatsSample: allCards.slice(0, 50)
   };
 
-
   hideCrawlProgressToast();
   showCrawlResultModal(crawlReport);
 
   return crawlReport;
 }
-
-// -------------------------------------------------------------------------
-// Extracción de Mensajes de Burbuja y Verificación de Historial Limpio
-// -------------------------------------------------------------------------
 
 function isSystemEventText(text) {
   if (!text) return true;
@@ -1323,7 +1278,7 @@ function isSystemEventText(text) {
   if (isDateString(s)) return true;
 
   const systemPatterns = [
-    // Español
+
     /^conversaci[oó]n abierta/i,
     /^etapa de ciclo de vida/i,
     /^añadido$/i,
@@ -1349,7 +1304,7 @@ function isSystemEventText(text) {
     /flujo\s+trabajo/i,
     /sales\s+agent\s+est[aá]\s+gestionando/i,
     /agente\s+de\s+ia\s+dejar[aá]\s+de\s+responder/i,
-    // Inglés (Respond.io estándar en interfaz en inglés)
+
     /^conversation opened/i,
     /^lifecycle stage/i,
     /^workflow/i,
@@ -1691,14 +1646,12 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     await new Promise(r => setTimeout(r, 25));
   }
 
-  // Si el contenedor tiene scroll previo hacia abajo, significa que hay historial previo oculto arriba.
   if (scrollEl && (scrollEl.scrollTop > 40 || scrollEl.scrollHeight > scrollEl.clientHeight + 150)) {
     console.log(`📜 [FlashApartador] Historial previo detectado (scrollTop = ${scrollEl.scrollTop}). Desplazando arriba para inspeccionar eventos iniciales...`);
     scrollEl.scrollTop = 0;
     await new Promise(r => setTimeout(r, 60));
   }
 
-  // Panel específico de mensajes de la conversación
   const chatMessagesPane = scrollEl ||
     document.querySelector('[data-pw="conversation-messages-list"], [class*="conversation-view"] [class*="scroll"], [class*="chat-messages"]');
 
@@ -1709,7 +1662,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
 
   const chatText = (chatMessagesPane.innerText || '').toLowerCase();
 
-  // 0. EXCLUSIÓN ESTRICTA: Diego Tacuri (Pertenece a Diego - PROHIBIDO TOCAR)
   if (
     chatText.includes('diego tacuri') ||
     chatText.includes('diego tacu') ||
@@ -1722,8 +1674,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     return false;
   }
 
-  // 0.1 EXCLUSIÓN ESTRICTA: Conversaciones Cerradas Previas (Lead Reciclado / Atendido Anteriormente)
-  // Si la conversación fue cerrada (por auto-close o manualmente por un asesor), el lead sigue perteneciendo al asesor original.
   if (
     chatText.includes('conversation closed') ||
     chatText.includes('conversación cerrada') ||
@@ -1740,8 +1690,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     return false;
   }
 
-  // 1. REGLA ESTRICTA: Detección de contactos desasignados previamente por compañeros
-  // (Si otro compañero lo desasignó, fue rechazado por residencia en USA, falta de documentos, etc.)
   if (
     chatText.includes('unassigned this person') ||
     chatText.includes('unassigned this contact') ||
@@ -1755,7 +1703,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     return false;
   }
 
-  // 2. Detección universal de asignaciones o desasignaciones de compañeros de la lista
   if (typeof TEAMMATE_NAMES !== 'undefined') {
     for (const tm of TEAMMATE_NAMES) {
       if (tm.length >= 3) {
@@ -1778,8 +1725,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     }
   }
 
-  // 3. Detección universal de asignaciones a cualquier asesor que NO sea Daniela Tacuri ni Sales Agent
-  // Captura formatos: "assigned to X", "assigned this person to X", "asignó a esta persona a X", etc.
   const assignRegex = /(?:assigned(?:\s+this\s+(?:person|contact|conversation))?\s+to|asignado\s+a|asignó(?:\s+a\s+esta\s+persona|\s+este\s+contacto)?\s+a)\s+([a-záéíóúñ]+(?:\s+[a-záéíóúñ]+){0,3})/gi;
   let assignMatch;
   while ((assignMatch = assignRegex.exec(chatText)) !== null) {
@@ -1796,8 +1741,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     }
   }
 
-  // 2. Detección de "Ayer" y fechas pasadas en separadores de fecha, pills y chips del sistema
-  // (NUNCA en el texto del mensaje entrante del lead para no descartar frases como "ayer vi tu video")
   const months = {
     ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5, jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11,
     jan: 0, apr: 3, aug: 7, dec: 11
@@ -1851,7 +1794,7 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
       const mIdx = months[mStr];
       if (mIdx !== undefined && !isNaN(dNum)) {
         if (dNum === now.getDate() && mIdx === now.getMonth() && yNum === now.getFullYear()) {
-          continue; // Es hoy, totalmente permitido
+          continue;
         }
         const targetD = new Date(yNum, mIdx, dNum);
         if (targetD < todayStart) {
@@ -1862,9 +1805,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     }
   }
 
-  // 3. Detección de burbujas de mensajes salientes (enviados por asesores anteriormente)
-  // NOTA CRÍTICA: Inspecciona SIEMPRE las burbujas salientes. Jamás saltar con isSalesAgent,
-  // porque un lead reciclado que pertenecía a Rodolfo o Diego pudo haber activado un workflow hoy.
   const outgoingElements = Array.from(chatMessagesPane.querySelectorAll(
     '[class*="justify-end"], [class*="items-end"], [class*="flex-row-reverse"], ' +
     '[class*="message--sent"], [class*="status--sent"], [class*="status--delivered"], [class*="status--read"], ' +
@@ -1876,7 +1816,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     const t = (el.innerText || '').toLowerCase().trim();
     if (!t || t.length <= 1) continue;
 
-    // Ignorar si es un texto meramente del bot, de workflow o de la automatización de comentarios de Instagram
     const isBotWorkflowNotice = (
       t.includes('flujo de trabajo') ||
       t.includes('flujo trabajo') ||
@@ -1910,12 +1849,10 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
 
     if (isBotWorkflowNotice) continue;
 
-    // Cualquier mensaje saliente real de asesor significa que el lead ya fue atendido
     console.log(`⏩ [FlashApartador] OMITIDO: Mensaje saliente previo de asesor detectado en chat: "${t.slice(0, 50)}"`);
     return false;
   }
 
-  // 4. Exclusión de compañeros humanos asignados previamente en la cronología
   for (const banned of TEAMMATE_NAMES) {
     if (banned.length >= 3) {
       if (
@@ -1938,10 +1875,8 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     }
   }
 
-  // 5. Si el mensaje es una respuesta a historia de Instagram ("Replied to your story")
   const isStoryReply = chatText.includes('respondió a tu historia') || chatText.includes('replied to your story');
 
-  // 6. Revisión exhaustiva de cada burbuja individual de mensaje
   let nonSystemBubbleCount = 0;
   for (const item of items) {
     if (item.closest?.('.messenger-event-row, [is-event="true"]') || item.querySelector?.('.messenger-event-row, [is-event="true"]')) {
@@ -2000,7 +1935,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
     console.log(`📸 [FlashApartador] Respuesta a historia de Instagram con King verificada (${nonSystemBubbleCount} mensajes). ¡PERMITIDO!`);
   }
 
-  // En un lead King totalmente nuevo, no puede haber más de 5 burbujas reales acumuladas
   if (nonSystemBubbleCount >= 6) {
     console.log(`⏩ [FlashApartador] OMITIDO: Conversación acumulada con ${nonSystemBubbleCount} mensajes (no es lead nuevo de primer contacto).`);
     return false;
@@ -2008,10 +1942,6 @@ async function checkChatHasCleanFreshHistory(targetConversationId = null, isSale
 
   return true;
 }
-
-// -------------------------------------------------------------------------
-// Stubs de funciones legacy (Cero dependencias externas en Standalone)
-// -------------------------------------------------------------------------
 
 async function startVipChatsLearning() {}
 async function processNextVipChatStep() {}

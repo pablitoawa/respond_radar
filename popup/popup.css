@@ -1,4 +1,4 @@
-/* RespondRadar - Modern, Streamlined Dark Dashboard */
+
 
 @font-face {
   font-family: 'Plus Jakarta Sans';
@@ -69,7 +69,6 @@ html, body {
   color-scheme: dark;
 }
 
-/* Lucide Vector Icons Utility */
 .radar-svg-icon {
   display: inline-flex;
   vertical-align: middle;
@@ -85,7 +84,6 @@ html, body {
 .text-red { color: #f43f5e !important; }
 .text-muted { color: #64748b !important; }
 
-/* Badge Dots for Team & Status */
 .badge-dot {
   width: 6.5px;
   height: 6.5px;
@@ -104,7 +102,6 @@ html, body {
 .dot-mine { background: #38bdf8; box-shadow: 0 0 6px rgba(56, 189, 248, 0.6); }
 .dot-emerald { background: #10b981; box-shadow: 0 0 6px rgba(16, 185, 129, 0.6); }
 
-/* Scrollbars Universales Modernos */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -149,9 +146,6 @@ input, select, textarea, button {
   background-color: var(--bg-main);
 }
 
-/* ========================================================= */
-/* Header & Navigation Segmentada                             */
-/* ========================================================= */
 .radar-header {
   display: flex;
   align-items: center;
@@ -209,7 +203,6 @@ input, select, textarea, button {
   -webkit-text-fill-color: transparent;
 }
 
-/* Segmented Control Navigation */
 .nav-segmented {
   display: flex;
   align-items: center;
@@ -275,9 +268,6 @@ input, select, textarea, button {
   background: var(--accent-red);
 }
 
-/* ========================================================= */
-/* Views Panel Manager                                        */
-/* ========================================================= */
 .view-panel {
   display: none;
   flex: 1;
@@ -290,11 +280,6 @@ input, select, textarea, button {
   display: flex;
 }
 
-/* ========================================================= */
-/* VIEW 1: LEADS STREAMLINED                                  */
-/* ========================================================= */
-
-/* Active Tab Strip (Compact & Clean) */
 .current-chat-strip {
   display: flex;
   align-items: center;
@@ -371,7 +356,6 @@ input, select, textarea, button {
   transform: none;
 }
 
-/* Strip Popover when adding lead */
 .banner-popover {
   position: absolute;
   top: calc(100% + 6px);
@@ -453,7 +437,6 @@ input, select, textarea, button {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Search & Period Filter Row */
 .search-filter-row {
   display: flex;
   align-items: center;
@@ -524,7 +507,6 @@ input, select, textarea, button {
   font-weight: 600;
 }
 
-/* Filter Tabs Bar (Segmented & High Z-Index) */
 .filter-tabs-bar {
   display: flex;
   align-items: center;
@@ -532,7 +514,7 @@ input, select, textarea, button {
   padding: 6px 12px;
   background: #0f172a;
   border-bottom: 1px solid var(--border-subtle);
-  overflow: visible; /* CRITICAL: prevents dropdown from being clipped! */
+  overflow: visible;
   position: relative;
   z-index: 60;
 }
@@ -644,9 +626,6 @@ input, select, textarea, button {
   color: #fff;
 }
 
-/* ========================================================= */
-/* Pipeline & Seguimiento Sub-Tabs Bar (Cute & Organized)    */
-/* ========================================================= */
 .pipeline-subtabs-bar {
   display: flex;
   align-items: center;
@@ -789,7 +768,6 @@ input, select, textarea, button {
   letter-spacing: 0.2px;
 }
 
-
 .subtab-badge {
   font-size: 9.5px;
   font-weight: 700;
@@ -804,7 +782,6 @@ input, select, textarea, button {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Leads List Container */
 .leads-list-container {
   flex: 1;
   display: flex;
@@ -865,9 +842,6 @@ input, select, textarea, button {
   border-radius: 9999px;
 }
 
-/* ========================================================= */
-/* Modern CRM Lead Card & Controls                          */
-/* ========================================================= */
 .lead-card {
   background: #131b2e;
   border: 1px solid var(--border-subtle);
@@ -899,7 +873,6 @@ input, select, textarea, button {
   background: #1a253d;
 }
 
-/* Card Header: Avatar + Identity + Actions */
 .lead-card-header {
   display: flex;
   align-items: center;
@@ -995,7 +968,6 @@ input, select, textarea, button {
   white-space: nowrap;
 }
 
-/* Card Badges Row: Full width & indented right below name */
 .lead-card-badges {
   display: flex;
   align-items: center;
@@ -1007,7 +979,6 @@ input, select, textarea, button {
   padding-left: 40px;
 }
 
-/* Owner Badges */
 .badge-owner {
   font-size: 9.5px;
   font-weight: 700;
@@ -1041,7 +1012,6 @@ input, select, textarea, button {
 .badge-owner-juan { background: rgba(6, 182, 212, 0.16); border: 1px solid rgba(6, 182, 212, 0.35); color: #22d3ee; }
 .badge-owner-yuquita { background: rgba(234, 179, 8, 0.16); border: 1px solid rgba(234, 179, 8, 0.35); color: #facc15; }
 
-/* Plan Badges */
 .lead-plan-badge, .lead-sale-badge {
   font-size: 9.5px;
   font-weight: 600;
@@ -1073,7 +1043,6 @@ input, select, textarea, button {
   color: #d8b4fe;
 }
 
-/* Stage Badges */
 .lead-stage-badge {
   font-size: 9.5px;
   font-weight: 700;
@@ -1120,7 +1089,6 @@ input, select, textarea, button {
   color: #f9a8d4;
 }
 
-/* Follow-up / Promesa de Dinero Badge on Lead Card */
 .lead-followup-badge {
   font-size: 9.5px;
   font-weight: 700;
@@ -1213,7 +1181,6 @@ input, select, textarea, button {
   flex: 1;
 }
 
-/* Card Actions */
 .lead-actions {
   display: flex;
   align-items: center;
@@ -1354,7 +1321,6 @@ input, select, textarea, button {
   color: #0b0f17;
 }
 
-/* Card Dropdown Menu (Options / Reassign) */
 .lead-menu-dropdown {
   position: absolute;
   top: calc(100% + 5px);
@@ -1423,7 +1389,6 @@ input, select, textarea, button {
   color: #6ee7b7;
 }
 
-/* Menu Plan & Stage Pills */
 .menu-plan-pills, .menu-stage-pills {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1609,7 +1574,6 @@ input, select, textarea, button {
   color: #fff;
 }
 
-/* Date Group Dividers */
 .lead-group-divider {
   font-size: 10.5px;
   font-weight: 700;
@@ -1622,7 +1586,6 @@ input, select, textarea, button {
   gap: 6px;
 }
 
-/* Empty State */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1651,9 +1614,6 @@ input, select, textarea, button {
   line-height: 1.4;
 }
 
-/* ========================================================= */
-/* VIEW 2: VENTAS DASHBOARD                                   */
-/* ========================================================= */
 .sales-dashboard-scroll {
   flex: 1;
   overflow-y: auto;
@@ -1663,7 +1623,6 @@ input, select, textarea, button {
   gap: 12px;
 }
 
-/* Barra de Filtro de Meses y Periodos */
 .sales-period-bar {
   display: flex;
   align-items: center;
@@ -1745,7 +1704,6 @@ input, select, textarea, button {
   font-weight: 700;
 }
 
-/* Hero Card & Dual Grid */
 .sales-hero-card {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(6, 78, 59, 0.32));
   border: 1.5px solid rgba(16, 185, 129, 0.35);
@@ -2071,9 +2029,6 @@ input, select, textarea, button {
   background: #27354f;
 }
 
-/* ========================================================= */
-/* VIEW 3: AJUSTES Y HERRAMIENTAS (Cards Organizadas)         */
-/* ========================================================= */
 .settings-scroll {
   flex: 1;
   overflow-y: auto;
@@ -2176,9 +2131,6 @@ input, select, textarea, button {
   opacity: 0.75;
 }
 
-/* ========================================================= */
-/* Comisiones por Plan - Grilla 3 Columnas Slate Elegante    */
-/* ========================================================= */
 .commissions-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2421,7 +2373,6 @@ input, select, textarea, button {
 .tool-name { font-size: 11px; font-weight: 600; }
 .tool-hint { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
 
-/* Toggles */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -2479,9 +2430,6 @@ input, select, textarea, button {
   transform: translateX(16px);
 }
 
-/* ========================================================= */
-/* Minimal Footer                                             */
-/* ========================================================= */
 .radar-footer-clean {
   display: flex;
   align-items: center;
@@ -2515,9 +2463,6 @@ kbd {
   color: var(--text-secondary);
 }
 
-/* ========================================================= */
-/* Modals & Dropdowns                                         */
-/* ========================================================= */
 .modal-overlay {
   position: absolute;
   inset: 0;

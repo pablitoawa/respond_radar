@@ -1,9 +1,4 @@
 // RespondRadar - Módulo 6: Auto-Apartador Flash ("The King")
-// content/flash_apartador.js
-
-// -------------------------------------------------------------------------
-// Filtros y Verificación de Aptitud de Candidatos
-// -------------------------------------------------------------------------
 
 function isKingTriggerText(text) {
   if (typeof isFlashTriggerMatch === 'function') {
@@ -21,7 +16,6 @@ function isCardTimestampOlderThanOneHour(timeText) {
   if (!timeText) return false;
   const s = timeText.toLowerCase().trim();
 
-  // 1. Fechas pasadas obvias: ayer, semanas, días, meses del calendario o días de la semana
   if (
     s.includes('ayer') || s.includes('yesterday') ||
     (s.includes('hace') && (s.includes('d') || s.includes('sem'))) ||
@@ -29,25 +23,22 @@ function isCardTimestampOlderThanOneHour(timeText) {
     /\b(?:oct|nov|dic|ene|feb|mar|abr|may|jun|jul|ago|sep)\b/.test(s) ||
     /\b(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/.test(s)
   ) {
-    return true; // Es antiguo
+    return true;
   }
 
-  // 2. Horas relativas ("1h", "2h", "3 horas", etc.) -> Mayor o igual a 1 hora
   const hourMatch = s.match(/\b(\d+)\s*(?:h|horas?|hrs?)\b/);
   if (hourMatch) {
     const h = parseInt(hourMatch[1], 10);
-    if (h >= 1) return true; // Antiguo
+    if (h >= 1) return true;
   }
 
-  // 3. Minutos relativos ("65m", "90 min")
   const minMatch = s.match(/\b(\d+)\s*(?:m|min|mins|minutos?)\b/);
   if (minMatch) {
     const m = parseInt(minMatch[1], 10);
-    if (m > 60) return true; // Antiguo
-    return false; // Fresco (< 60 min)
+    if (m > 60) return true;
+    return false;
   }
 
-  // 4. Hora del día ("3:13 PM", "10:30 am", "15:45")
   const clockMatch = s.match(/\b(\d{1,2}):(\d{2})(?:\s*(am|pm))?\b/i);
   if (clockMatch) {
     let hour = parseInt(clockMatch[1], 10);
@@ -66,7 +57,7 @@ function isCardTimestampOlderThanOneHour(timeText) {
     }
 
     if (diffMinutes > 60) {
-      return true; // Mensaje de hace más de 1 hora
+      return true;
     }
   }
 
@@ -80,19 +71,16 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
   const assigneeEl = cardEl.querySelector('[data-pw="messages-conversation-item-assignee"]');
   const assigneeText = (assigneeEl?.innerText || '').toLowerCase();
 
-  // 1. Si cardInfo detectó que ya es de Daniela Tacuri o Diego Tacuri
   if (cardInfo && (cardInfo.owner === 'Daniela (Mía)' || cardInfo.owner === 'Diego (Mío)' || cardInfo.owner === 'Diego')) {
     console.log('🛡️ [FlashApartador] Tarjeta omitida: Ya pertenece a Daniela o Diego Tacuri.');
     return false;
   }
 
-  // 2. Si cardInfo ya detectó a un compañero de equipo específico
   if (cardInfo && typeof isTeammateName === 'function' && isTeammateName(cardInfo.owner)) {
     console.log(`🛡️ [FlashApartador] Tarjeta omitida: Asignada a compañero "${cardInfo.owner}".`);
     return false;
   }
 
-  // 3. Inspeccionar atributos del cesionario si existe
   const assigneeAttrs = assigneeEl ? [
     assigneeEl.getAttribute('title') || '',
     assigneeEl.getAttribute('aria-label') || '',
@@ -102,7 +90,6 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
     ...Array.from(assigneeEl.querySelectorAll('[title]')).map(i => i.title || '')
   ].join(' ').toLowerCase() : '';
 
-  // 4. Si los atributos indican Daniela Tacuri -> Ya es nuestro
   if (
     assigneeAttrs.includes('daniela tacuri') ||
     (assigneeAttrs.includes('daniela') && !assigneeAttrs.includes('moya'))
@@ -110,7 +97,6 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
     return false;
   }
 
-  // 5. Si los atributos indican Diego Tacuri -> PROHIBIDO
   if (
     assigneeAttrs.includes('diego tacuri') ||
     assigneeAttrs.includes('diego tacu') ||
@@ -122,13 +108,11 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
     return false;
   }
 
-  // 6. Si los atributos del cesionario coinciden con un compañero humano de la lista
   if (assigneeAttrs && typeof isTeammateName === 'function' && isTeammateName(assigneeAttrs)) {
     console.log(`🛡️ [FlashApartador] Tarjeta omitida: Compañero de equipo detectado en cesionario.`);
     return false;
   }
 
-  // 7. REGLA ESTRICTA DE 1 HORA: Descartar leads antiguos (> 1h) o con fechas pasadas
   const timeEl = cardEl.querySelector('time, [class*="time"], [data-pw*="time"], [class*="date"]');
   const timeText = (timeEl?.innerText || '').toLowerCase();
   if (isCardTimestampOlderThanOneHour(timeText)) {
@@ -136,7 +120,6 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
     return false;
   }
 
-  // 8. Detección Positiva de Sales Agent, Sin Asignar o New Lead elegible
   const hasHumanPhoto = !!assigneeEl?.querySelector('img[src*="googleusercontent"], img[src*="avatar"]');
   if (hasHumanPhoto && !assigneeAttrs.includes('sales') && !assigneeAttrs.includes('agent') && !assigneeAttrs.includes('bot')) {
     console.log('🛡️ [FlashApartador] Tarjeta omitida: Foto real de asesor humano en cesionario.');
@@ -159,12 +142,10 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
   const isUnassigned = !assigneeEl || hasSquareBotIcon || assigneeAttrs.includes('sin asignar') || assigneeAttrs.includes('unassigned') || (cardInfo && cardInfo.owner === 'Sin asignar');
   const isNewLeadStage = cardText.includes('new lead') || cardText.includes('lead') || (cardInfo && cardInfo.stage === 'New Lead');
 
-  // Si es Sales Agent, Sin Asignar, o una tarjeta nueva en etapa New Lead sin foto de asesor humano
   if (isSalesAgent || isUnassigned || (isNewLeadStage && !hasHumanPhoto)) {
     return true;
   }
 
-  // 9. Si la tarjeta ya tiene respuesta saliente (↗) de un ASESOR HUMANO (no bot) y 0 no leídos
   if (cardInfo && (cardInfo.isOutgoingArrow || cardText.includes('↗') || cardText.includes('tú:') || cardText.includes('you:'))) {
     if (cardInfo.unreadCount === 0 && !cardText.includes('king')) {
       console.log('🛡️ [FlashApartador] Tarjeta omitida: Asesor humano ya respondió (↗) y 0 no leídos.');
@@ -172,15 +153,9 @@ function isEligibleUnassignedOrSalesAgent(cardInfo, cardEl) {
     }
   }
 
-  // 10. CANDADO DE MÁXIMA SEGURIDAD:
-  // Si no se confirmó explícitamente como "Sales Agent" ni "Sin Asignar", se asume asesor humano ajeno. PROHIBIDO TOCAR.
   console.log('🛡️ [FlashApartador] Tarjeta omitida: No confirmada como Sales Agent ni Sin Asignar (cesionario humano ajeno).');
   return false;
 }
-
-// -------------------------------------------------------------------------
-// Registro y Rastreo de Leads Apartados en la Sesión
-// -------------------------------------------------------------------------
 
 function recordLeadApartado({ id, name, text, channel, source }) {
   if (!id) return;
@@ -206,14 +181,8 @@ function recordLeadApartado({ id, name, text, channel, source }) {
   }
 }
 
-// -------------------------------------------------------------------------
-// Envío Rápido de Saludo y Auto-Asignación Directa
-// -------------------------------------------------------------------------
-
-// Mapa de canales detectados en tiempo real por WebSocket
 const socketChannelMap = new Map();
 
-// Disparador de Victoria por API de Respond.io (Intercepción Network)
 function trigger0msApiTakeover(conversationId, greetingText, name, contactChannelId, channel) {
   return new Promise((resolve) => {
     let resolved = false;
@@ -240,7 +209,6 @@ function trigger0msApiTakeover(conversationId, greetingText, name, contactChanne
       }
     }));
 
-    // Timeout seguro de 3500ms para permitir respuesta de red sin falsos timeouts
     setTimeout(() => {
       if (!resolved) {
         window.removeEventListener('RADAR_API_TAKEOVER_RESULT', handler);
@@ -250,11 +218,9 @@ function trigger0msApiTakeover(conversationId, greetingText, name, contactChanne
   });
 }
 
-// Registro de conversaciones que ya recibieron saludo en esta sesión (Anti-Duplicados en Memoria)
 const sentGreetingConversationIds = new Set();
 const countedApartadosIds = new Set();
 const lockedTurboNames = new Set();
-
 
 async function sendFlashKingGreeting(conversationId = null) {
   const GREETING = FLASH_GREETING_MESSAGE || (typeof DEFAULT_FLASH_GREETING !== 'undefined' ? DEFAULT_FLASH_GREETING : "Hola, cómo estás? De donde eres y qué edad tienes?");
@@ -266,7 +232,6 @@ async function sendFlashKingGreeting(conversationId = null) {
     : (urlConvId || (conversationId ? String(conversationId) : null));
   const activeNameLower = (typeof getActiveContactName === 'function' ? (getActiveContactName() || '') : '').toLowerCase().trim();
 
-  // 0. Comprobación en memoria (por ID numérico, ID de URL y nombre bloqueado por Turbo)
   if (
     (cIdStr && sentGreetingConversationIds.has(cIdStr)) ||
     (urlConvId && sentGreetingConversationIds.has(urlConvId)) ||
@@ -279,7 +244,6 @@ async function sendFlashKingGreeting(conversationId = null) {
     return { ok: true, sent: true, assigned, alreadySent: true };
   }
 
-  // 0.1 Comprobación Cross-Tab de candado atómico (Multi-Pestaña)
   const checkIds = Array.from(new Set([cIdStr, urlConvId].filter(Boolean)));
   for (const idToCheck of checkIds) {
     try {
@@ -299,7 +263,6 @@ async function sendFlashKingGreeting(conversationId = null) {
     } catch (e) { }
   }
 
-  // 1. Comprobación en el DOM: si el saludo ya fue enviado y aparece en las burbujas, no reenviar
   if (typeof hasGreetingAlreadyBeenSent === 'function' && hasGreetingAlreadyBeenSent(GREETING)) {
     console.log('🛡️ [FlashApartador Anti-Doble] Saludo ya fue enviado previamente en este chat según el DOM.');
     if (cIdStr) sentGreetingConversationIds.add(cIdStr);
@@ -309,14 +272,12 @@ async function sendFlashKingGreeting(conversationId = null) {
 
   console.log('⚡⚡ [FlashApartador] Asegurando Takeover y preparando envío único...');
 
-  // 2. Asegurar Takeover si el Sales Agent está presente y esperar a que el editor de chat esté listo
   const composer = await ensureTakeoverAndComposerReady(1800);
   if (!composer) {
     console.warn('⚠️ [FlashApartador] No se encontró el editor de mensajes tras esperar Takeover.');
     return { ok: false, sent: false, assigned: false, reason: 'composer_not_found' };
   }
 
-  // 3. Segunda comprobación tras Takeover (por si el saludo se renderizó tras abrir)
   if (typeof hasGreetingAlreadyBeenSent === 'function' && hasGreetingAlreadyBeenSent(GREETING)) {
     console.log('🛡️ [FlashApartador Anti-Doble] Saludo detectado tras Takeover en el chat. Abortando envío duplicado.');
     if (cIdStr) sentGreetingConversationIds.add(cIdStr);
@@ -324,32 +285,23 @@ async function sendFlashKingGreeting(conversationId = null) {
     return { ok: true, sent: true, assigned, alreadySent: true };
   }
 
-  // 4. Inyectar el texto del saludo (SOLO INSERCIÓN, SIN ENVÍO)
   composer.focus();
   await writeTextIntoComposer(composer, GREETING);
 
-  // Espera breve de 80ms para estabilización del texto en el DOM
   await new Promise(r => setTimeout(r, 80));
 
-  // 5. Disparar el envío físico de forma única y controlada
   sent = await triggerMessageSend(composer);
 
   if (sent && cIdStr) {
     sentGreetingConversationIds.add(cIdStr);
   }
 
-  // 6. Asignar la conversación formalmente a Daniela Tacuri en el DOM
   assigned = await assignConversationToMe();
 
   const ok = sent;
   console.log(`🏁 [FlashApartador] Resultado final DOM: Sent=${sent}, Assigned=${assigned}, OK=${ok}`);
   return { ok, sent, assigned };
 }
-
-
-// -------------------------------------------------------------------------
-// HUD Flotante del Auto-Apartador Flash
-// -------------------------------------------------------------------------
 
 let flashHudTimerInterval = null;
 
@@ -434,7 +386,6 @@ function renderFlashApartadorHUD() {
     document.body.appendChild(hud);
   }
 
-  // Actualizaciones in-place sin destruir el DOM ni causar reflows
   const statusEl = hud.querySelector('#radar-flash-status-msg');
   if (statusEl) {
     const rawText = flashApartadorState.statusText || 'Monitoreando leads en tiempo real';
@@ -498,31 +449,21 @@ function renderFlashApartadorHUD() {
   }
 }
 
-// -------------------------------------------------------------------------
-// Apertura y Navegación Robusta de Tarjetas
-// -------------------------------------------------------------------------
-
 function openInboxCard(cardEl) {
   if (!cardEl) return false;
   const linkEl = cardEl.matches('a[href*="/inbox/"]') ? cardEl : (cardEl.closest('a[href*="/inbox/"]') || cardEl.querySelector('a[href*="/inbox/"]'));
   const innerClickable = cardEl.querySelector('[data-pw="link-convo-item"]') || cardEl;
 
-  // 1. Simulación completa de MouseEvent / PointerEvent directo en los elementos del chat
   triggerPointerClick(innerClickable);
   if (linkEl && linkEl !== innerClickable) {
     triggerPointerClick(linkEl);
   }
 
-  // 2. Fallback nativo .click() directo sobre la tarjeta y el link (sin depender de coordenadas en pantalla)
   if (typeof innerClickable.click === 'function') innerClickable.click();
   if (linkEl && typeof linkEl.click === 'function') linkEl.click();
 
   return true;
 }
-
-// -------------------------------------------------------------------------
-// Bucle de Ejecución del Auto-Apartador Flash
-// -------------------------------------------------------------------------
 
 let lastOmissionTime = 0;
 let lastGlobalScanTakeoverClickTime = 0;
@@ -536,7 +477,6 @@ async function runFlashApartadorStep() {
   try {
     try { ensureTodosFolderActive(); } catch (e) { }
 
-    // 1. Obtener y deduplicar tarjetas de la lista izquierda
     let cards = [];
     if (typeof getInboxCards === 'function') {
       try {
@@ -563,7 +503,6 @@ async function runFlashApartadorStep() {
     let targetCard = null;
     let targetInfo = null;
 
-    // 1. Prioridad Máxima: Si el WebSocket interceptó un King por ID en tiempo real
     if (flashApartadorState.priorityCandidateId) {
       const pId = String(flashApartadorState.priorityCandidateId);
       if (!flashApartadorState.processedIds.has(pId)) {
@@ -580,7 +519,6 @@ async function runFlashApartadorStep() {
           }
         }
 
-        // Si el candidato del socket aún no aparece en el DOM visible, forzar un micro-scroll
         if (!targetCard) {
           const scrollContainer = document.querySelector('.v-virtual-scroll, [class*="inbox-conversation-list"], [class*="conversation-list"]');
           if (scrollContainer && scrollContainer.scrollTop === 0) {
@@ -591,7 +529,6 @@ async function runFlashApartadorStep() {
       }
     }
 
-    // 2. Escaneo secuencial del DOM para tarjetas visibles (fallback general)
     if (!targetCard) {
       for (const card of cards) {
         let info = null;
@@ -610,13 +547,10 @@ async function runFlashApartadorStep() {
           continue;
         }
 
-        // Obtener el texto del mensaje del lead (NUNCA incluir el nombre del contacto para evitar falsos positivos con emojis o palabras en el nombre)
         const previewEl = card.querySelector('[data-pw="messages-conversation-item-preview"], .conversation-list-item--message, [class*="preview"], [class*="snippet"]');
         const previewText = (previewEl?.innerText || previewEl?.textContent || '').trim();
         const snippetText = (info.snippet || '').trim();
 
-        // Usar previewText o info.snippet (que ya excluyen el nombre del contacto).
-        // Si ambos están vacíos, extraer de cardText habiendo removido previamente el nombre del contacto.
         let candidateMsgText = previewText || snippetText;
         if (!candidateMsgText) {
           const contactName = info.name || getCardContactName(card) || '';
@@ -627,10 +561,8 @@ async function runFlashApartadorStep() {
           candidateMsgText = cardClean;
         }
 
-        // 1. Identificar si es un lead "King" auténtico en el mensaje
         if (!isKingTriggerText(candidateMsgText)) continue;
 
-        // 2. Verificar si está disponible (Sin asignar o Sales Agent)
         if (!isEligibleUnassignedOrSalesAgent(info, card)) {
           continue;
         }
@@ -641,7 +573,6 @@ async function runFlashApartadorStep() {
       }
     }
 
-    // 3. Chequeo de seguridad: Si el chat ACTUALMENTE ABIERTO en pantalla es un King disponible no procesado
     if (!targetCard) {
       const cur = parseCurrentUrl();
       if (cur.conversationId && !flashApartadorState.processedIds.has(String(cur.conversationId))) {
@@ -649,7 +580,7 @@ async function runFlashApartadorStep() {
         try { openAssignee = getOpenChatAssigneeStatus(); } catch (e) { }
         if (openAssignee?.isAllowed) {
           const lastMsg = getActiveConversationLastLeadMessage() || '';
-          // CRUCIAL: El chat DEBE ser un lead King legítimo. Jamás tomar un chat solo porque tiene takeoverBtn si el lead no dijo King!
+
           if (isKingTriggerText(lastMsg)) {
             console.log(`🎯 [FlashApartador] ¡El chat actualmente abierto (${cur.conversationId}) es un candidato King legítimo! Mensaje: "${lastMsg}"`);
             targetInfo = {
@@ -660,15 +591,12 @@ async function runFlashApartadorStep() {
             targetCard = cards.find(c => extractCardConversationId(c) === cur.conversationId) || document.body;
           }
         } else if (openAssignee && !openAssignee.isAllowed) {
-          // Si el chat abierto pertenece a Diego, a un compañero o a Daniela, registrarlo en processedIds
-          // para no re-analizarlo cada 50ms y eliminar el spam de logs en la consola
+
           flashApartadorState.processedIds.add(String(cur.conversationId));
         }
       }
     }
 
-    // 🛡️ Guardián en Tiempo Real para el Chat Abierto (con debounce de 1500ms):
-    // Si en el chat activo en pantalla el Sales Agent intenta tomar el control o aparece Takeover, neutralizar al bot
     const activeTakeoverBtn = typeof findAsumirButton === 'function' ? findAsumirButton() : null;
     if (activeTakeoverBtn && (Date.now() - lastGlobalScanTakeoverClickTime > 1500)) {
       const cur = parseCurrentUrl();
@@ -687,7 +615,6 @@ async function runFlashApartadorStep() {
       let targetCId = String(targetInfo.conversationId);
       const targetNameLower = (targetInfo.name || '').toLowerCase().trim();
 
-      // 🛡️ CANDADO ANTI-DOBLE: Si ya fue apartado por Modo Turbo API (por ID o por Nombre) o ya recibió saludo, JAMÁS procesar en DOM
       if (
         sentGreetingConversationIds.has(targetCId) ||
         flashApartadorState.processedIds.has(targetCId) ||
@@ -706,10 +633,9 @@ async function runFlashApartadorStep() {
       console.log(`🎯 [FlashApartador TURBO] Candidato King detectado: "${targetInfo.name}" (${targetInfo.conversationId}).`);
 
       try {
-        // 1. Abrir la tarjeta simultáneamente con simulación completa de eventos
+
         openInboxCard(targetCard);
 
-        // 2. Esperar ultra-rápido a que Respond.io cambie la URL o monte el chat (tolerancia ampliada hasta 1200ms)
         let navigated = false;
         const targetName = (targetInfo.name || '').toLowerCase().trim();
 
@@ -745,7 +671,6 @@ async function runFlashApartadorStep() {
           return;
         }
 
-        // Sincronizar con el ID numérico real de la URL tras navegar (resuelve tarjetas con ID "tmp_...")
         const realNavCId = String(parseCurrentUrl().conversationId || '');
         if (realNavCId) {
           if (sentGreetingConversationIds.has(realNavCId) || flashApartadorState.processedIds.has(realNavCId)) {
@@ -763,13 +688,10 @@ async function runFlashApartadorStep() {
           targetInfo.conversationId = realNavCId;
         }
 
-        // Ya navegó con éxito -> ahora sí registrar en processedIds
         flashApartadorState.processedIds.add(targetCId);
 
-        // Respiro de 35ms para montaje reactivo y visibilidad gráfica fluida
         await new Promise(r => setTimeout(r, 35));
 
-        // 3. Verificación de cesionario actual en cabecera
         const assigneeStatus = getOpenChatAssigneeStatus();
         if (!assigneeStatus.isAllowed) {
           console.log(`⏩ [FlashApartador] Omitido: Chat ya asignado en cabecera a ${assigneeStatus.name}.`);
@@ -784,7 +706,6 @@ async function runFlashApartadorStep() {
           return;
         }
 
-        // 4. Verificación exhaustiva de historial limpio (evitar tocar chats de Diego, compañeros o con historial viejo)
         const isClean = await checkChatHasCleanFreshHistory(targetInfo.conversationId, assigneeStatus.isSalesAgent);
 
         if (!isClean) {
@@ -801,7 +722,6 @@ async function runFlashApartadorStep() {
           return;
         }
 
-        // 4.1 CANDADO DE SEGURIDAD ESTRICTO: Confirmar en el DOM del chat abierto que el mensaje del lead es REALMENTE un King
         const chatLeadMsg = getActiveConversationLastLeadMessage() || '';
         const chatPaneText = (document.querySelector('[data-pw="conversation-messages-list"], [class*="chat-messages"], [class*="conversation-view"]')?.innerText || '');
         const isKingInChat = isKingTriggerText(chatLeadMsg) ||
@@ -822,7 +742,6 @@ async function runFlashApartadorStep() {
           return;
         }
 
-        // 5. Pulsar "Asumir" si el Sales Agent está activo de inmediato
         const earlyAsumir = findAsumirButton();
         if (earlyAsumir) {
           clickElementByCoordinates(earlyAsumir);
@@ -835,21 +754,18 @@ async function runFlashApartadorStep() {
         flashApartadorState.statusText = `🚀 Apartando y asignando a Daniela Tacuri...`;
         renderFlashApartadorHUD();
 
-        // 🛡️ SEGUNDO CANDADO ANTI-DOBLE ENVÍO: Si el saludo ya fue enviado por Modo Turbo API en RAM mientras navegaba
         if (sentGreetingConversationIds.has(targetCId)) {
           console.log(`🛡️ [FlashApartador Anti-Doble] Conversación ${targetCId} ya recibió saludo por Turbo API. Abortando saludo doble en DOM.`);
           flashApartadorState.isProcessingCandidate = false;
           return;
         }
 
-        // 6. Ejecución Mandatoria en DOM: Takeover de Sales Agent + Saludo Único en Editor Quill (Anti-Doble Envío)
         const tDomStart = performance.now();
         const domResult = await sendFlashKingGreeting(targetInfo.conversationId);
         const resultOk = domResult && domResult.ok && domResult.sent;
         const domMs = Math.round(performance.now() - tDomStart);
         const domMsText = `${domMs}ms`;
 
-        // Refuerzo de asignación por API en segundo plano (SOLO asignación limpia, NUNCA enviar mensaje doble)
         try {
           window.dispatchEvent(new CustomEvent('RADAR_FORCE_REASSIGN', {
             detail: {
@@ -881,13 +797,10 @@ async function runFlashApartadorStep() {
             showCrawlProgressToast(`${targetInfo.name} apartado en ${domMsText} (Total: ${flashApartadorState.apartadosCount})`);
           }
 
-          // 🛡️ Guardián Anti-Workflow DOM Activo (4.5 segundos)
-          // Si el bot de Respond.io ("Workflow fxking nuevos leads IA") termina después de nuestro saludo
-          // y reasigna a Sales agent o hace aparecer "Asumir" / "Sales is typing", lo neutralizamos al instante
           startDomAntiWorkflowWatchdog(targetCId);
         } else {
           console.warn(`⚠️ [FlashApartador] No se pudo enviar el saludo a ${targetInfo.name}. Permitiendo reintento...`);
-          // Remover de processedIds para permitir que el escáner reintente en el siguiente ciclo
+
           flashApartadorState.processedIds.delete(targetCId);
           flashApartadorState.statusText = `⚠️ No se pudo enviar saludo a ${targetInfo.name}`;
           renderFlashApartadorHUD();
@@ -907,7 +820,6 @@ async function runFlashApartadorStep() {
       return;
     }
 
-    // Actualizar estado idle solo si el texto cambió y pasaron al menos 2.5s desde la última omisión
     const now = Date.now();
     if (now - lastOmissionTime > 2500) {
       if (flashApartadorState.statusText !== 'Escaneando "Todos"... esperando nuevo "King"') {
@@ -917,7 +829,7 @@ async function runFlashApartadorStep() {
     }
 
     if (flashApartadorState.active) {
-      flashApartadorState.timerId = setTimeout(runFlashApartadorStep, 150); // Fallback suave de 150ms
+      flashApartadorState.timerId = setTimeout(runFlashApartadorStep, 150);
     }
   } catch (err) {
     console.error('❌ [FlashApartador] Error en ciclo runFlashApartadorStep:', err);
@@ -928,10 +840,6 @@ async function runFlashApartadorStep() {
   }
 }
 
-// -------------------------------------------------------------------------
-// Guardián Activo Anti-Workflow en el DOM (Vigilancia post-envío de 7s)
-// Neutraliza de inmediato si el bot (Workflow fxking) termina y reasigna a Sales Agent
-// -------------------------------------------------------------------------
 function startDomAntiWorkflowWatchdog(targetCId) {
   if (!targetCId) return;
   const cIdStr = String(targetCId);
@@ -943,7 +851,7 @@ function startDomAntiWorkflowWatchdog(targetCId) {
 
   const watchdogInterval = setInterval(() => {
     const elapsed = Date.now() - startTime;
-    // Si pasaron más de 7000ms, terminar guardián
+
     if (elapsed > 7000) {
       clearInterval(watchdogInterval);
       return;
@@ -951,13 +859,12 @@ function startDomAntiWorkflowWatchdog(targetCId) {
 
     try {
       const cur = parseCurrentUrl();
-      // Periodo de gracia de 2.5s para permitir que Respond.io navegue y cargue la vista
+
       if (elapsed > 2500 && cur.conversationId && String(cur.conversationId) !== cIdStr) {
         clearInterval(watchdogInterval);
         return;
       }
 
-      // 1. Si apareció el botón Asumir (Takeover), pulsarlo con debounce de 1500ms
       const takeoverBtn = typeof findAsumirButton === 'function' ? findAsumirButton() : null;
       if (takeoverBtn && (Date.now() - lastWatchdogTakeoverClickTime > 1500)) {
         lastWatchdogTakeoverClickTime = Date.now();
@@ -968,7 +875,6 @@ function startDomAntiWorkflowWatchdog(targetCId) {
         window.dispatchEvent(new CustomEvent('RADAR_CLICK_TAKEOVER_MAIN'));
       }
 
-      // 2. Si el cesionario en cabecera se convirtió en Sales Agent, re-afirmar silenciosamente por API con debounce de 2000ms
       const assignee = typeof getOpenChatAssigneeStatus === 'function' ? getOpenChatAssigneeStatus() : null;
       if (assignee && assignee.isSalesAgent && (Date.now() - lastWatchdogReassignDispatch > 2000)) {
         lastWatchdogReassignDispatch = Date.now();
@@ -981,10 +887,6 @@ function startDomAntiWorkflowWatchdog(targetCId) {
   }, 150);
 }
 
-// -------------------------------------------------------------------------
-// Observador en Tiempo Real (MutationObserver - 60 FPS)
-// -------------------------------------------------------------------------
-
 let flashMutationObserver = null;
 let pendingFlashScanRaf = null;
 
@@ -992,7 +894,6 @@ function triggerFlashScanDebounced() {
   if (!flashApartadorState.active || flashApartadorState.isProcessingCandidate) return;
   if (pendingFlashScanRaf) return;
 
-  // Sincronizado con el refresco de pantalla del navegador (60 FPS, cero congelamiento)
   pendingFlashScanRaf = requestAnimationFrame(() => {
     pendingFlashScanRaf = null;
     if (flashApartadorState.active && !flashApartadorState.isProcessingCandidate) {
@@ -1004,7 +905,6 @@ function triggerFlashScanDebounced() {
 function startFlashMutationObserver() {
   if (flashMutationObserver) flashMutationObserver.disconnect();
 
-  // Enfocar el observador en la barra lateral de conversaciones
   const sidebar = document.querySelector('[data-pw*="conversation"], [class*="conversation-list"], aside, nav') ||
     document.querySelector('main') ||
     document.body;
@@ -1016,7 +916,7 @@ function startFlashMutationObserver() {
     for (let i = 0; i < mutations.length; i++) {
       const target = mutations[i].target;
       if (!target) continue;
-      // Filtrar mutaciones generadas por nuestros propios elementos para evitar bucles
+
       if (
         target.id === 'radar-flash-hud' ||
         (target.closest && target.closest('#radar-flash-hud, #radar-crawl-toast, #respond-radar-widget, .radar-flash-hud'))
@@ -1052,10 +952,6 @@ function stopFlashMutationObserver() {
     pendingFlashScanRaf = null;
   }
 }
-
-// -------------------------------------------------------------------------
-// Control de Ciclo de Vida: Iniciar, Detener y Alternar
-// -------------------------------------------------------------------------
 
 function startFlashApartador() {
   if (flashApartadorState.active) return;
@@ -1120,10 +1016,8 @@ function stopFlashApartador() {
     setTimeout(hideCrawlProgressToast, 3500);
   }
 
-  // Desplegar automáticamente el resumen interactivo de los leads apartados
   showApartadosSummaryModal();
 
-  // Reanudar actualización de insignias y panel general tras detener el Auto-Apartador
   setTimeout(() => {
     if (typeof scanInboxSidebar === 'function') scanInboxSidebar();
     if (typeof updateWidgetUI === 'function') updateWidgetUI();
@@ -1138,7 +1032,6 @@ function toggleFlashApartador() {
   }
 }
 
-// 🔒 Candado Inmediato de Modo Turbo (T = 0ms) para garantizar CERO mensajes dobles
 window.addEventListener('RADAR_TURBO_LOCK_CONTACT', (e) => {
   const cId = String(e.detail?.conversationId || '');
   const rawName = String(e.detail?.name || '').trim();
@@ -1157,7 +1050,6 @@ window.addEventListener('RADAR_TURBO_LOCK_CONTACT', (e) => {
   console.log(`🔒 [FlashApartador] Candado Turbo Inmediato (0ms) activado para ${cId} (${rawName}). El DOM NUNCA enviará saludo.`);
 });
 
-// 🔓 Desbloquear contacto ÚNICAMENTE si Modo Turbo abortó en pre-verificación ANTES de enviar saludo
 window.addEventListener('RADAR_TURBO_UNLOCK_CONTACT', (e) => {
   const cId = String(e.detail?.conversationId || '');
   const rawName = String(e.detail?.name || '').trim();
@@ -1175,13 +1067,11 @@ window.addEventListener('RADAR_TURBO_UNLOCK_CONTACT', (e) => {
   }
 });
 
-// Escuchar alertas de nuevos mensajes King en tiempo real vía WebSocket desde page_bridge.js
 window.addEventListener('RADAR_SOCKET_KING_DETECTED', (e) => {
   const detail = e.detail;
   if (!detail || !detail.contactId) return;
   const cId = String(detail.contactId);
 
-  // Almacenar metadatos de canal del socket para envío API en <100ms
   if (detail.contactChannelId) {
     socketChannelMap.set(cId, {
       contactChannelId: detail.contactChannelId,
@@ -1189,42 +1079,34 @@ window.addEventListener('RADAR_SOCKET_KING_DETECTED', (e) => {
     });
   }
 
-  // Si ya fue procesado o bloqueado por Turbo en RAM, JAMÁS mandar al DOM
   if (flashApartadorState.processedIds.has(cId) || sentGreetingConversationIds.has(cId)) return;
 
-  // Si el apartador no está activo, ignorar
   if (!flashApartadorState.active) return;
 
-  // Registrar como candidato prioritario para el DOM ÚNICAMENTE si es un contacto reciclado
-  // (para que el DOM inspeccione el historial limpio) o si Turbo está inactivo
   flashApartadorState.priorityCandidateId = cId;
 
   console.log(`⚡ [RespondRadar Socket] Candidato detectado (${detail.name || cId}). Priorizando verificación en DOM...`);
   flashApartadorState.statusText = `Candidato detectado (${detail.name || cId}) · Verificando historial...`;
   renderFlashApartadorHUD();
 
-  // Si el apartador no está ocupado procesando otro candidato, ejecutar ciclo de escaneo inmediato
   if (!flashApartadorState.isProcessingCandidate) {
     clearTimeout(flashApartadorState.timerId);
     flashApartadorState.timerId = setTimeout(runFlashApartadorStep, 15);
   }
 });
 
-// Escuchar confirmación de victoria inmediata en Modo Turbo por API (25ms)
 window.addEventListener('RADAR_TURBO_KING_APARTADO_SUCCESS', (e) => {
   const detail = e.detail;
   if (!detail || !detail.conversationId) return;
   const cId = String(detail.conversationId);
   const name = detail.name || `Lead #${cId}`;
 
-  // Candado contra doble conteo: si ya fue contabilizado en esta sesión, evitar duplicar
   if (countedApartadosIds.has(cId) || (flashApartadorState.apartadosList && flashApartadorState.apartadosList.some(x => x.id === cId))) {
     console.log(`ℹ️ [FlashApartador] Lead ${cId} ya fue contabilizado previamente en esta sesión.`);
     return;
   }
   countedApartadosIds.add(cId);
 
-  // Asegurar que quede registrado en processedIds, sentGreeting y lockedTurboNames para blindar contra envíos DOM
   flashApartadorState.processedIds.add(cId);
   sentGreetingConversationIds.add(cId);
   if (name && !name.startsWith('Lead #')) {
@@ -1255,7 +1137,6 @@ window.addEventListener('RADAR_TURBO_KING_APARTADO_SUCCESS', (e) => {
     showCrawlProgressToast(`${name} apartado en ${msText} (Total: ${flashApartadorState.apartadosCount})`);
   }
 
-  // Sincronización visual sin mareos: abrir la tarjeta en la barra lateral
   try {
     const cur = parseCurrentUrl();
     if (!cur.conversationId || cur.conversationId !== cId) {
@@ -1267,15 +1148,8 @@ window.addEventListener('RADAR_TURBO_KING_APARTADO_SUCCESS', (e) => {
     }
   } catch (err) { }
 
-  // 🛡️ Guardián Anti-Workflow Activo para leads capturados en Turbo (7 segundos)
-  // Si el bot de Respond.io ("Workflow fxking nuevos leads IA") termina después de la API Turbo
-  // y reasigna a Sales agent o muestra Takeover en el chat abierto, lo neutralizamos de inmediato
   startDomAntiWorkflowWatchdog(cId);
 });
-
-// -------------------------------------------------------------------------
-// Modal Interactivo de Resumen de Leads Apartados
-// -------------------------------------------------------------------------
 
 function showApartadosSummaryModal() {
   document.getElementById('radar-apartados-summary-modal')?.remove();
@@ -1393,7 +1267,6 @@ function showApartadosSummaryModal() {
     if (e.target === modal) closeModal();
   });
 
-  // Abrir chat
   modal.querySelectorAll('.btn-open').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-id');
@@ -1414,7 +1287,6 @@ function showApartadosSummaryModal() {
     });
   });
 
-  // Asegurar individual
   modal.querySelectorAll('.btn-reassign').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-id');
@@ -1429,7 +1301,6 @@ function showApartadosSummaryModal() {
     });
   });
 
-  // Asegurar TODOS a Daniela
   modal.querySelector('#radar-summary-reassign-all-btn')?.addEventListener('click', () => {
     const reassignBtn = modal.querySelector('#radar-summary-reassign-all-btn');
     if (reassignBtn) {
@@ -1450,7 +1321,6 @@ function showApartadosSummaryModal() {
     }, 600);
   });
 
-  // Copiar lista al portapapeles
   modal.querySelector('#radar-summary-copy-btn')?.addEventListener('click', () => {
     const spaceId = apiSessionState?.spaceId || '384258';
     const textLines = list.map((l, i) => `${i + 1}. ${l.name} (${l.timeFormatted}) - https://app.respond.io/space/${spaceId}/inbox/${l.id}`).join('\n');
@@ -1484,5 +1354,4 @@ window.RespondRadarStartFlashApartador = startFlashApartador;
 window.RespondRadarStopFlashApartador = stopFlashApartador;
 window.RespondRadarToggleFlashApartador = toggleFlashApartador;
 window.RespondRadarShowApartadosSummary = showApartadosSummaryModal;
-
 

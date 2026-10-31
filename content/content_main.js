@@ -1,10 +1,4 @@
-// RespondRadar - Módulo 7: Orquestador Principal, Ciclo de Vida y Event Listeners
-// content/content_main.js
-
-// -------------------------------------------------------------------------
-// Escaneo del DOM con Debounce y MutationObserver
-// -------------------------------------------------------------------------
-
+// RespondRadar - Módulo 7
 function requestScan() {
   if (!isExtensionValid()) {
     try { observer.disconnect(); } catch (e) {}
@@ -49,10 +43,6 @@ observer.observe(document.body, {
   subtree: true
 });
 
-// -------------------------------------------------------------------------
-// Manejadores de Mensajes y Eventos en Tiempo Real
-// -------------------------------------------------------------------------
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message && message.type === 'SMOOTH_NAVIGATE_TO_CHAT') {
     const { url, conversationId } = message.payload || {};
@@ -63,7 +53,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else {
       sendResponse({ success: false });
     }
-    return true; // Asíncrono
+    return true;
   }
 });
 
@@ -126,16 +116,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-// -------------------------------------------------------------------------
-// Atajos de Teclado y Cierres Globales
-// -------------------------------------------------------------------------
-
 window.addEventListener('keydown', (e) => {
   if (e.altKey && (e.key === 'h' || e.key === 'H')) {
     e.preventDefault();
     if (typeof toggleWidgetVisibility === 'function') toggleWidgetVisibility();
   }
-  // Atajos de navegación rápida entre chats (Alt + ↓ siguiente, Alt + ↑ anterior)
   if (keyboardNavigationEnabled && e.altKey && (e.key === 'ArrowDown' || e.key === 'Down')) {
     e.preventDefault();
     e.stopPropagation();
@@ -159,17 +144,12 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// -------------------------------------------------------------------------
-// Polling SPA y Keep-Alive Heartbeat (Standalone)
-// -------------------------------------------------------------------------
-
 const pollInterval = setInterval(() => {
   if (!isExtensionValid()) {
     clearInterval(pollInterval);
     try { observer.disconnect(); } catch (e) {}
     return;
   }
-  // Si el Auto-Apartador Flash está activo, pausar todo el polling secundario para darle el 100% de CPU y red
   if (window.__radarFlashActive || (typeof flashApartadorState !== 'undefined' && flashApartadorState.active)) {
     return;
   }
@@ -181,15 +161,10 @@ const pollInterval = setInterval(() => {
   requestScan();
 }, 1200);
 
-// Heartbeat cada 3.5 minutos para evitar suspensión por inactividad
 setInterval(() => {
   if (isExtensionValid()) {
     safeSendMessage({ type: 'HEARTBEAT_PULSE' });
   }
 }, 3.5 * 60 * 1000);
-
-// -------------------------------------------------------------------------
-// Inicialización
-// -------------------------------------------------------------------------
 
 loadStoredData();

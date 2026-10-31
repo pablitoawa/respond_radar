@@ -1,11 +1,4 @@
-// RespondRadar - Módulo 2: Interacciones con el DOM, Selectores y Eventos
-// content/dom_utils.js
-
-// -------------------------------------------------------------------------
-// Disparadores de Eventos del Ratón, Teclado y Coordenadas
-// -------------------------------------------------------------------------
-
-// Disparar clics de puntero completos para asegurar que frameworks reactivos capturen el evento
+// RespondRadar - Módulo 2
 function triggerPointerClick(el) {
   if (!el) return;
   try {
@@ -21,7 +14,6 @@ function triggerPointerClick(el) {
   }
 }
 
-// Disparar atajo de teclado nativo de Respond.io: Ctrl + M (Cesionario)
 function triggerCtrlMShortcut() {
   const init = {
     key: 'm',
@@ -38,7 +30,6 @@ function triggerCtrlMShortcut() {
   window.dispatchEvent(new KeyboardEvent('keydown', init));
 }
 
-// Disparar click compatible con Radix Vue y frameworks reactivos
 function triggerRadixClick(el) {
   if (!el) return;
   const opts = {
@@ -64,7 +55,6 @@ function triggerRadixClick(el) {
   }
 }
 
-// Calcular coordenadas exactas de un elemento y disparar secuencia completa de eventos de puntero/ratón
 function clickElementByCoordinates(el) {
   if (!el) return false;
   const rect = el.getBoundingClientRect();
@@ -91,8 +81,6 @@ function clickElementByCoordinates(el) {
   };
 
   const atPoint = document.elementFromPoint(cx, cy);
-  // BLINDAJE ESTRICTO: Solo aceptar atPoint si pertenece al propio elemento objetivo o es hijo de él.
-  // Si atPoint es un elemento externo solapado (como el header o el switch de 'Sin responder'), NUNCA tocarlo.
   const isAtPointValid = atPoint && (atPoint === el || el.contains(atPoint));
   const safeAtPoint = isAtPointValid ? atPoint : null;
   const icon = el.querySelector('i, svg');
@@ -114,10 +102,6 @@ function clickElementByCoordinates(el) {
 
   return true;
 }
-
-// -------------------------------------------------------------------------
-// Inspección y Selectores del DOM
-// -------------------------------------------------------------------------
 
 function buildUniqueSelector(el) {
   if (!el || el.nodeType !== Node.ELEMENT_NODE) return '';
@@ -163,7 +147,6 @@ function isElementVisible(el) {
   }
 }
 
-// Extraer Space ID y Conversation ID de la URL actual
 function parseCurrentUrl() {
   const match = window.location.pathname.match(/\/space\/([^/]+)\/inbox\/([^/]+)/);
   if (match) {
@@ -179,7 +162,6 @@ function parseCurrentUrl() {
   };
 }
 
-// Helper: Selector ultra-robusto para el elemento de título de la tarjeta
 function getCardTitleElement(card) {
   if (!card) return null;
   return card.querySelector('h6, [data-pw="conversation-name"], .conversation-list-item--title, [class*="convo-name"]')
@@ -187,7 +169,6 @@ function getCardTitleElement(card) {
     || card.querySelector('h5, h4');
 }
 
-// Helper: Extraer el nombre real y limpio del contacto de una tarjeta
 function getCardContactName(card) {
   if (!card) return '';
 
@@ -216,7 +197,6 @@ function getCardContactName(card) {
   return '';
 }
 
-// Extraer el nombre del contacto activo del header, tarjeta seleccionada o document.title
 function getActiveContactName() {
   const selectedCard = document.querySelector('a.conversation-list--item[selected="true"], [data-pw="link-convo-item"][selected="true"], .conversation-list--item[aria-selected="true"], a.conversation-list--item.dls-bg-bg-gray');
   if (selectedCard) {
@@ -256,7 +236,6 @@ function getActiveContactName() {
   return 'Lead Seleccionado';
 }
 
-// Extraer ID único de conversación de la tarjeta o enlaces
 function extractCardConversationId(card) {
   if (!card) return null;
   const dataId = card.getAttribute('data-id') || (card.dataset && card.dataset.id);
@@ -280,7 +259,6 @@ function extractCardConversationId(card) {
   return null;
 }
 
-// Helper: Extraer hora o fecha formateada del texto de la tarjeta
 function extractCardTime(text) {
   if (!text) return '';
   const dayMatch = text.match(/\b(?:domingo|s[aá]bado|sabado|viernes|jueves|mi[eé]rcoles|miercoles|martes|lunes|sunday|saturday|friday|thursday|wednesday|tuesday|monday)(?:\s*,?\s*\d{1,2}:\d{2}(?:\s*(?:AM|PM|am|pm))?)?\b/i);
@@ -301,17 +279,10 @@ function extractCardTime(text) {
   return '';
 }
 
-/**
- * Determina si el timestamp de una tarjeta corresponde a un mensaje en tiempo real (< 15 minutos)
- * o si es de horas o días anteriores (Saturday, Yesterday, Tuesday, Oct 19, etc.) para evitar spam de notificaciones.
- * @param {string} timeText - Texto de tiempo de la tarjeta (ej: "Saturday", "10:25 AM", "Yesterday", "5m")
- * @returns {boolean} true si es reciente (< 15 min), false si es antiguo
- */
 function isRecentMessageTimestamp(timeText) {
   if (!timeText) return false;
   const s = String(timeText).toLowerCase().trim();
 
-  // 1. Fechas pasadas: ayer, semanas, días, meses o días de la semana
   if (
     s.includes('ayer') || s.includes('yesterday') ||
     (s.includes('hace') && (s.includes('d') || s.includes('sem'))) ||
@@ -322,25 +293,21 @@ function isRecentMessageTimestamp(timeText) {
     return false;
   }
 
-  // 2. Horas relativas ("1h", "2h", "3 horas", etc.) -> Antiguo
   const hourMatch = s.match(/\b(\d+)\s*(?:h|horas?|hrs?)\b/);
   if (hourMatch) {
     return false;
   }
 
-  // 3. Minutos relativos ("5m", "12 min")
   const minMatch = s.match(/\b(\d+)\s*(?:m|min|mins|minutos?)\b/);
   if (minMatch) {
     const m = parseInt(minMatch[1], 10);
     return m <= 15;
   }
 
-  // 4. "Ahora", "just now", "hace un momento"
   if (s.includes('ahora') || s.includes('now') || s.includes('momento')) {
     return true;
   }
 
-  // 5. Hora del día ("11:30 AM", "10:15", "14:20")
   const clockMatch = s.match(/\b(\d{1,2}):(\d{2})(?:\s*(am|pm))?\b/i);
   if (clockMatch) {
     let hour = parseInt(clockMatch[1], 10);
@@ -355,14 +322,12 @@ function isRecentMessageTimestamp(timeText) {
 
     const diffMinutes = (now.getTime() - msgDate.getTime()) / (1000 * 60);
 
-    // Solo es reciente si ocurrió en los últimos 15 minutos de HOY
     return diffMinutes >= -1 && diffMinutes <= 15;
   }
 
   return false;
 }
 
-// Helper: Extraer el snippet real del mensaje (descartando nombres, fechas, tags y badges)
 function extractCardSnippet(card, contactName, timeStr) {
   if (!card) return '';
 
@@ -430,7 +395,6 @@ function extractCardSnippet(card, contactName, timeStr) {
   return '';
 }
 
-// Helper: Comprobar si la actividad/mensaje de un lead está dentro de la ventana de la jornada (12h)
 function isCardActivityWithinWindow(card, maxMinutes = 720) {
   if (!card) return false;
 
@@ -461,11 +425,6 @@ function isCardActivityWithinWindow(card, maxMinutes = 720) {
   return false;
 }
 
-// -------------------------------------------------------------------------
-// Contenedores de Scroll de Chats y Bandeja
-// -------------------------------------------------------------------------
-
-// Localizador ultra-robusto del contenedor de scroll real de la lista de chats
 function findActiveScrollContainer() {
   const cards = typeof getInboxCards === 'function' ? getInboxCards() : [];
   if (cards.length > 0) {
@@ -503,7 +462,6 @@ function findActiveScrollContainer() {
   return document.querySelector('.v-virtual-scroll, [class*="inbox-conversation-list"], [class*="conversation-list"]') || document.documentElement;
 }
 
-// Encontrar el contenedor con scroll activo de la conversación central
 function findChatScrollContainer() {
   const centerMessageCandidates = Array.from(document.querySelectorAll('[id^="message-item-"], [class*="message-item"], [data-pw*="message-item"], [class*="chat-message"]'))
     .filter(el => {
@@ -555,13 +513,7 @@ function findChatScrollContainer() {
   return scrollers[0] || null;
 }
 
-// -------------------------------------------------------------------------
-// Manipulación del Editor de Texto (Composer) y Botón de Enviar
-// -------------------------------------------------------------------------
-
-// Localizar el editor de texto de mensajes de Respond.io con máxima robustez
 function findChatComposer() {
-  // 1. Selector directo 100% verificado en el DOM de Respond.io (respond_dump.html)
   const exactPendo = document.querySelector('[data-pendo="messages-composer-input"] .ql-editor[contenteditable="true"], [data-pendo="messages-composer-input"] [contenteditable="true"]');
   if (exactPendo && isElementVisible(exactPendo)) return exactPendo;
 
@@ -614,18 +566,15 @@ function findChatComposer() {
   return null;
 }
 
-// Comprobar si el mensaje de saludo ya fue enviado previamente en la conversación abierta (Anti-Duplicados Estricto)
 function hasGreetingAlreadyBeenSent(greetingText) {
   try {
     const targetPhrase = (greetingText || FLASH_GREETING_MESSAGE || "Hola, cómo estás").toLowerCase().slice(0, 20).trim();
 
-    // Contenedor principal de mensajes
     const chatPane = findChatScrollContainer() ||
       document.querySelector('[data-pw="conversation-messages-list"], [class*="chat-history"], [class*="conversation-view"], [class*="chat-messages"]');
 
     if (!chatPane) return false;
 
-    // Buscar en todas las burbujas o filas de mensaje del chat
     const bubbles = Array.from(chatPane.querySelectorAll(
       '[class*="justify-end"], [class*="items-end"], [class*="flex-row-reverse"], ' +
       '[class*="message--sent"], [class*="status--sent"], [class*="status--delivered"], [class*="status--read"], ' +
@@ -652,20 +601,16 @@ function hasGreetingAlreadyBeenSent(greetingText) {
   return false;
 }
 
-// Inyectar el texto en el editor de Respond.io garantizando reactividad total de Quill y Vue (SOLO INSERCIÓN, SIN DISPARO)
 async function writeTextIntoComposer(composer, text) {
   if (!composer) return false;
 
-  // 1. Dar foco al compositor
   composer.focus();
   await new Promise(r => setTimeout(r, 4));
 
-  // 2. Inyección directa en la instancia nativa de Quill en MAIN world (sin clic de envío)
   window.dispatchEvent(new CustomEvent('RADAR_PAGE_INSERT_TEXT', {
     detail: { text }
   }));
 
-  // 3. Inserción DOM en content script
   let p = composer.querySelector('p');
   if (!p) {
     p = document.createElement('p');
@@ -691,7 +636,6 @@ async function writeTextIntoComposer(composer, text) {
     composer.classList.remove('ql-blank');
   }
 
-  // 4. Disparar eventos nativos de input para despertar los observadores reactivos de Vue
   try {
     composer.dispatchEvent(new InputEvent('beforeinput', {
       bubbles: true,
@@ -712,7 +656,6 @@ async function writeTextIntoComposer(composer, text) {
   composer.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
   composer.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
 
-  // Habilitar inmediatamente el botón de envío
   const sendBtn = findChatSendButton(composer);
   if (sendBtn) {
     try {
@@ -729,7 +672,6 @@ async function writeTextIntoComposer(composer, text) {
   return currentVal.length > 0;
 }
 
-// Inyectar texto fluidamente en el editor de mensajes (utilizado por el copiloto y sugerencias)
 function insertTextIntoComposer(text) {
   let composer = document.querySelector('[data-pendo="messages-composer-input"] .ql-editor[contenteditable="true"], .composer-input [contenteditable="true"], .ql-editor[contenteditable="true"], .ProseMirror[contenteditable="true"], .tiptap[contenteditable="true"], #mention [contenteditable="true"], [contenteditable="true"], textarea');
   if (!composer) return false;
@@ -752,13 +694,10 @@ function insertTextIntoComposer(text) {
   return true;
 }
 
-// Localizar y calcular la posición exacta del botón de envío de Respond.io con máxima cobertura
 function findChatSendButton(composer) {
-  // 1. Selector directo 100% exacto verificado en respond_dump.html:
   const directPendo = document.querySelector('button[data-pendo="messages-message-composer-send"], [data-pendo="messages-message-composer-send"]');
   if (directPendo && isElementVisible(directPendo)) return directPendo;
 
-  // 2. Selector alternativo por atributo data-pendo
   const pendoCandidates = Array.from(document.querySelectorAll('button[data-pendo="messages-message-composer-send"], [data-pendo*="composer-send"]')).filter(b => {
     const r = b.getBoundingClientRect();
     return r.width > 0 && r.height > 0 && r.top > 150;
@@ -768,7 +707,6 @@ function findChatSendButton(composer) {
     return pendoCandidates[0];
   }
 
-  // 3. Contenedor directo del compositor activo
   if (composer) {
     const composerRoot = composer.closest('.dls-rounded-rectangular-8, [class*="rounded-rectangular"], [data-v-78048c2d], [class*="composer"], div.dls-flex-col') ||
       composer.parentElement?.parentElement?.parentElement?.parentElement;
@@ -785,7 +723,6 @@ function findChatSendButton(composer) {
       const rootPrimary = composerRoot.querySelector('button[data-color="primary"][data-variant="primary"], button.dls-bg-button-primary, button[data-variant="primary"]');
       if (rootPrimary) return rootPrimary;
 
-      // Buscar todos los botones en la barra de herramientas del compositor y elegir el botón derecho (enviar)
       const allBoxButtons = Array.from(composerRoot.querySelectorAll('button, [role="button"]')).filter(b => {
         if (b.closest('#respond-radar-widget, #radar-dom-scan-modal, #radar-flash-hud')) return false;
         const r = b.getBoundingClientRect();
@@ -804,7 +741,6 @@ function findChatSendButton(composer) {
     }
   }
 
-  // 4. Icono de FontIcon icon-send-bold o icon-send global
   const iconCandidates = Array.from(document.querySelectorAll('i.icon-send-bold, i.icon-send, [class*="icon-send"], [class*="icon-paper-plane"]')).filter(i => {
     const r = i.getBoundingClientRect();
     return r.width > 0 && r.height > 0 && r.top > 150;
@@ -814,7 +750,6 @@ function findChatSendButton(composer) {
     if (b && !b.id?.includes('radar')) return b;
   }
 
-  // 5. Botones con etiqueta o título explícito "Enviar" o "Send"
   const ariaCandidates = Array.from(document.querySelectorAll('button[aria-label*="enviar" i], button[title*="enviar" i], button[aria-label*="send" i], button[title*="send" i]')).filter(b => {
     const r = b.getBoundingClientRect();
     return r.width > 0 && r.height > 0 && r.top > 150;
@@ -824,7 +759,6 @@ function findChatSendButton(composer) {
   return null;
 }
 
-// Disparar envío único controlado del mensaje y verificar que se envíe (Anti-Doble Disparo)
 async function triggerMessageSend(composer) {
   if (!composer) return false;
 
@@ -834,7 +768,6 @@ async function triggerMessageSend(composer) {
     return false;
   }
 
-  // 1. Localizar el botón de envío
   let sendBtn = findChatSendButton(composer);
   if (sendBtn) {
     try {
@@ -844,7 +777,6 @@ async function triggerMessageSend(composer) {
       sendBtn.style.pointerEvents = 'auto';
     } catch (e) { }
 
-    // Intentar disparo nativo por clic simple (UNA SOLA VEZ)
     console.log('⚡ [FlashApartador] Disparando envío por clic en sendBtn...');
     if (typeof sendBtn.click === 'function') {
       sendBtn.click();
@@ -852,12 +784,10 @@ async function triggerMessageSend(composer) {
       triggerPointerClick(sendBtn);
     }
   } else {
-    // 2. Si no hay botón, intentar disparo nativo en MAIN world
     console.log('⚡ [FlashApartador] Disparando envío vía MAIN world...');
     window.dispatchEvent(new CustomEvent('RADAR_PAGE_CLICK_SEND'));
   }
 
-  // Esperar 150ms a que Vue/Quill procese el despacho y limpie el compositor
   await new Promise(r => setTimeout(r, 150));
 
   let remainingText = (composer.innerText || composer.textContent || composer.value || '').trim();
@@ -866,7 +796,6 @@ async function triggerMessageSend(composer) {
     return true;
   }
 
-  // Si tras 150ms el texto sigue intacto, probar Enter simulado una sola vez
   console.log('🔄 [FlashApartador] El texto aún sigue en la caja. Intentando envío con Enter...');
   const enterOpts = {
     key: 'Enter',
@@ -883,7 +812,6 @@ async function triggerMessageSend(composer) {
   composer.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
   composer.dispatchEvent(new KeyboardEvent('keyup', enterOpts));
 
-  // Esperar otros 180ms
   await new Promise(r => setTimeout(r, 180));
 
   remainingText = (composer.innerText || composer.textContent || composer.value || '').trim();
@@ -892,7 +820,6 @@ async function triggerMessageSend(composer) {
     return true;
   }
 
-  // Si aún persiste, intentar último disparo en MAIN world
   console.log('🔄 [FlashApartador] Último intento de clic en MAIN world...');
   window.dispatchEvent(new CustomEvent('RADAR_PAGE_CLICK_SEND'));
   await new Promise(r => setTimeout(r, 200));
@@ -903,7 +830,6 @@ async function triggerMessageSend(composer) {
     return true;
   }
 
-  // Si el texto ya no contiene "Hola" o se redujo drásticamente
   if (!remainingText.toLowerCase().includes('hola')) {
     return true;
   }
@@ -911,9 +837,7 @@ async function triggerMessageSend(composer) {
   return false;
 }
 
-// Localizar el botón de "Asumir" / "Takeover" si el Sales Agent está en control (frena al bot de inmediato)
 function findAsumirButton() {
-  // 1. FAST-PATH (0ms): Coincidencia directa por selectores específicos o texto en botones
   const directCandidates = Array.from(document.querySelectorAll(
     'button, [role="button"], a.v-btn, a[class*="btn"], [data-pw*="takeover"], [data-pw*="asumir"], [data-testid*="takeover"], [data-pendo*="takeover"], [class*="takeover"]'
   ));
@@ -948,7 +872,6 @@ function findAsumirButton() {
     }
   }
 
-  // 2. Coincidencia en Banners, Alertas o Notificaciones de Sales Agent o Workflows
   const bannerContainers = Array.from(document.querySelectorAll(
     '[class*="banner"], [class*="alert"], [class*="callout"], [role="alert"], [class*="notice"], [class*="notification"], [class*="handling"], [data-pw*="alert"]'
   ));
@@ -966,13 +889,11 @@ function findAsumirButton() {
       t.includes('ai agent') ||
       t.includes('stop responding')
     ) {
-      // Buscar botón específico de acción dentro de este banner
       const btnInBanner = el.querySelector('button, [role="button"], a');
       if (btnInBanner) return btnInBanner;
     }
   }
 
-  // 3. Búsqueda profunda en elementos individuales (hojas del DOM)
   const allLeafs = Array.from(document.querySelectorAll('span, div, a')).filter(el => {
     if (el.closest('#respond-radar-widget, #radar-dom-scan-modal, #radar-flash-hud')) return false;
     if (el.children.length > 0) return false;
@@ -986,7 +907,6 @@ function findAsumirButton() {
   return null;
 }
 
-// Ejecutar Takeover activamente si está presente y esperar a que el compositor esté montado y disponible
 async function ensureTakeoverAndComposerReady(maxWaitMs = 1800) {
   const startTime = Date.now();
   let takeoverExecuted = false;
@@ -1000,18 +920,14 @@ async function ensureTakeoverAndComposerReady(maxWaitMs = 1800) {
       triggerPointerClick(takeoverBtn);
       if (typeof takeoverBtn.click === 'function') takeoverBtn.click();
 
-      // Notificar también a MAIN world para disparo nativo
       window.dispatchEvent(new CustomEvent('RADAR_CLICK_TAKEOVER_MAIN'));
       takeoverExecuted = true;
 
-      // Esperar brevemente a que Respond.io procese el cambio de estado y desmonte el bot
       await new Promise(r => setTimeout(r, 140));
     }
 
-    // Comprobar si el compositor de chat de cliente ya está montado y visible
     const composer = findChatComposer();
     if (composer && isElementVisible(composer)) {
-      // Si el cesionario sigue indicando Sales Agent, reintentar pulsar takeover hasta 200ms adicionales
       const status = typeof getOpenChatAssigneeStatus === 'function' ? getOpenChatAssigneeStatus() : null;
       if (status && status.isSalesAgent && !takeoverExecuted && (Date.now() - startTime < 800)) {
         await new Promise(r => setTimeout(r, 80));
@@ -1026,9 +942,6 @@ async function ensureTakeoverAndComposerReady(maxWaitMs = 1800) {
   return findChatComposer();
 }
 
-// -------------------------------------------------------------------------
-// Control Directo del Bot de Respond.io (Bot Status ON / OFF vía PUT Oficial)
-// -------------------------------------------------------------------------
 async function executeSetContactBotStatus(conversationId, botStatus = false, spaceId) {
   if (!conversationId) {
     const info = typeof parseCurrentUrl === 'function' ? parseCurrentUrl() : {};
@@ -1051,12 +964,10 @@ async function executeSetContactBotStatus(conversationId, botStatus = false, spa
     showApartadoStatusToast(`⏳ ${targetLabel}`, 1500);
   }
 
-  // Despachar evento al bridge del MAIN world para ejecutar el PUT oficial /api/v2/contact/bot-status
   window.dispatchEvent(new CustomEvent('RADAR_EXEC_SET_BOT_STATUS', {
     detail: { conversationId: cIdStr, botStatus: Boolean(botStatus), spaceId: spaceId || '384258' }
   }));
 
-  // Confirmación visual
   setTimeout(() => {
     if (typeof showApartadoStatusToast === 'function') {
       showApartadoStatusToast(successLabel, 3000);
@@ -1069,7 +980,6 @@ async function executeSetContactBotStatus(conversationId, botStatus = false, spa
   return true;
 }
 
-// Retrocompatibilidad con nombres anteriores
 const executeDeactivateSalesAgentAi = (conversationId, spaceId) => executeSetContactBotStatus(conversationId, false, spaceId);
 
 window.RespondRadarSetBotStatus = executeSetContactBotStatus;
@@ -1077,13 +987,7 @@ window.RespondRadarBotOff = (cId) => executeSetContactBotStatus(cId, false);
 window.RespondRadarBotOn = (cId) => executeSetContactBotStatus(cId, true);
 window.RespondRadarDeactivateSalesAgent = executeDeactivateSalesAgentAi;
 
-// -------------------------------------------------------------------------
-// Navegación Rápida entre Chats con Teclado (Blindaje Anti-Saltos por Reordenamiento)
-// -------------------------------------------------------------------------
 let isNavigatingChat = false;
-
-// Memoria de anclaje de posición: guarda quién estaba inmediatamente abajo/arriba
-// para no perder el hilo si al responder el chat salta al tope (index 0) o desaparece ("Sin responder")
 let chatNavAnchor = {
   currentId: null,
   belowId: null,
@@ -1093,7 +997,6 @@ let chatNavAnchor = {
 };
 
 function getSortedVisibleChatCards() {
-  // Selector robusto de Respond.io: cada elemento de chat tiene data-pw="link-convo-item" o clase conversation-list-item
   let candidateEls = Array.from(document.querySelectorAll('[data-pw="link-convo-item"]'));
   if (candidateEls.length === 0) {
     candidateEls = Array.from(document.querySelectorAll('.conversation-list-item, a.conversation-list--item'));
@@ -1112,10 +1015,8 @@ function getSortedVisibleChatCards() {
 
     if (!convId || seenIds.has(String(convId))) continue;
 
-    // Medir la posición de visualEl (la caja real con 98px de alto y translate)
     const rect = visualEl.getBoundingClientRect();
 
-    // Solo elementos en la barra lateral izquierda (< 680px) y que estén en el viewport
     if (rect.left < 680 && rect.bottom > 0) {
       seenIds.add(String(convId));
 
@@ -1130,7 +1031,6 @@ function getSortedVisibleChatCards() {
         linkEl.classList.contains('router-link-active')
       );
 
-      // Coordenada visual pura: extraer de translateY si existe en style, o rect.top
       let visualTop = rect.top;
       const transMatch = visualEl.style.transform ? visualEl.style.transform.match(/translateY\((\d+(?:\.\d+)?)px\)/) : null;
       if (transMatch) {
@@ -1148,7 +1048,6 @@ function getSortedVisibleChatCards() {
     }
   }
 
-  // Ordenar verticalmente de arriba a abajo de forma 100% matemática y visual
   validCards.sort((a, b) => a.top - b.top);
   return validCards;
 }
@@ -1163,8 +1062,6 @@ function updateChatNavAnchorFromCurrent() {
 
   const idx = validCards.findIndex(c => c.id === currentId);
   if (idx !== -1) {
-    // Si el chat está en el puesto 0, pero ANTES teníamos registrado que estaba en visualIndex > 0,
-    // significa que acaba de responder y saltó al tope. ¡NO sobreescribir el ancla de partida!
     if (idx === 0 && chatNavAnchor.currentId === currentId && chatNavAnchor.visualIndex > 0) {
       return;
     }
@@ -1179,7 +1076,6 @@ function updateChatNavAnchorFromCurrent() {
   }
 }
 
-// Sincronizar el anclaje cuando el usuario hace clic manual con el ratón en la lista
 document.addEventListener('click', (e) => {
   const clickedCard = e.target.closest('[data-pw="link-convo-item"], a.conversation-list--item, .conversation-list-item, a[href*="/inbox/"]');
   if (clickedCard) {
@@ -1201,7 +1097,6 @@ function navigateChatList(direction = 'down') {
   const currentInfo = typeof parseCurrentUrl === 'function' ? parseCurrentUrl() : {};
   const currentId = currentInfo.conversationId ? String(currentInfo.conversationId) : null;
 
-  // Encontrar el índice de la tarjeta activa actualmente en el listado ordenado
   let currentIdx = -1;
   if (currentId) {
     currentIdx = validCards.findIndex(c => c.id === currentId);
@@ -1212,16 +1107,12 @@ function navigateChatList(direction = 'down') {
 
   let targetIndex = -1;
 
-  // CASO A: El chat recién respondido saltó al tope (posición 0), pero antes estaba más abajo
   const didJumpToTop = (currentIdx === 0 && chatNavAnchor.visualIndex > 0 && chatNavAnchor.currentId === currentId);
 
-  // CASO B: El chat desapareció de la lista (por ejemplo con filtro "Sin responder")
   const didDisappear = (currentIdx === -1 && chatNavAnchor.visualIndex !== -1);
 
   if (didJumpToTop || didDisappear) {
-    // Hubo reordenamiento por mensaje enviado:
     if (direction === 'down') {
-      // Queremos ir al que estaba ABAJO antes de responder:
       if (chatNavAnchor.belowId) {
         targetIndex = validCards.findIndex(c => c.id === String(chatNavAnchor.belowId));
       }
@@ -1229,7 +1120,6 @@ function navigateChatList(direction = 'down') {
         targetIndex = Math.min(chatNavAnchor.visualIndex, validCards.length - 1);
       }
     } else {
-      // Queremos ir al que estaba ARRIBA antes de responder:
       if (chatNavAnchor.aboveId) {
         targetIndex = validCards.findIndex(c => c.id === String(chatNavAnchor.aboveId));
       }
@@ -1238,7 +1128,6 @@ function navigateChatList(direction = 'down') {
       }
     }
   } else {
-    // CASO C: NAVEGACIÓN NORMAL (El usuario está explorando 1 a 1 de forma estricta)
     if (direction === 'down') {
       targetIndex = (currentIdx !== -1) ? currentIdx + 1 : 0;
     } else {
@@ -1246,11 +1135,9 @@ function navigateChatList(direction = 'down') {
     }
   }
 
-  // Asegurar límites dentro del rango visible de la lista
   if (targetIndex < 0) targetIndex = 0;
   if (targetIndex >= validCards.length) targetIndex = validCards.length - 1;
 
-  // Si ya estamos exactamente en ese chat y es el extremo, no hacer nada
   if (targetIndex === currentIdx && currentIdx !== -1 && !didJumpToTop && !didDisappear) {
     return;
   }
@@ -1258,7 +1145,6 @@ function navigateChatList(direction = 'down') {
   const target = validCards[targetIndex];
   if (!target || (!target.el && !target.visualEl)) return;
 
-  // Guardar el ancla EXACTA de este nuevo chat y sus vecinos inmediatos reales en el DOM
   chatNavAnchor = {
     currentId: String(target.id),
     belowId: validCards[targetIndex + 1]?.id ? String(validCards[targetIndex + 1].id) : null,
@@ -1267,7 +1153,6 @@ function navigateChatList(direction = 'down') {
     lastActionTime: Date.now()
   };
 
-  // Scroll suave al chat objetivo y ajuste del contenedor si llega a los extremos
   try {
     const container = document.querySelector('.conversations-list-wrapper');
     if (targetIndex === 0 && container) {
@@ -1281,7 +1166,6 @@ function navigateChatList(direction = 'down') {
     }
   } catch (e) {}
 
-  // Abrir el chat de forma segura y directa (100% aislado del header y switches externos)
   const targetCardEl = target.el || target.visualEl;
   if (typeof openInboxCard === 'function') {
     openInboxCard(targetCardEl);
@@ -1290,7 +1174,6 @@ function navigateChatList(direction = 'down') {
     if (typeof targetCardEl.click === 'function') targetCardEl.click();
   }
 
-  // Auto-focus en el editor de texto del nuevo chat con reintentos para dar tiempo a la vista
   [60, 180, 380].forEach((delay) => {
     setTimeout(() => {
       const composer = findChatComposer();
@@ -1312,7 +1195,6 @@ function navigateChatList(direction = 'down') {
 window.RespondRadarNavigateChat = navigateChatList;
 window.RespondRadarUpdateNavAnchor = updateChatNavAnchorFromCurrent;
 
-// Asegurar que la bandeja "Todos" del Buzón esté activa (con throttle de 10s para cero congelamiento visual)
 let lastTodosCheckTime = 0;
 function ensureTodosFolderActive(force = false) {
   try {
@@ -1347,20 +1229,14 @@ function ensureTodosFolderActive(force = false) {
   return false;
 }
 
-// -------------------------------------------------------------------------
-// Cesionario, Detección de Asignaciones y Reglas Anti-Compañeros
-// -------------------------------------------------------------------------
-
 function findHeaderAssigneeElements() {
   const candidates = [];
 
-  // 1. Selector directo 100% verificado en el DOM de Respond.io (respond_dump.html):
   const assignmentBtn = document.querySelector('[data-pendo="messages-assignment"] button[role="combobox"], [data-pendo="messages-assignment"] button, button[data-pendo="messages-assignment"]');
   if (assignmentBtn && isElementVisible(assignmentBtn)) {
     candidates.push(assignmentBtn);
   }
 
-  // 2. Elementos con atributos relacionados a cesionario (EXCLUYENDO ESTRICTAMENTE COLABORADORES)
   const allCandidates = Array.from(document.querySelectorAll('*')).filter(el => {
     if (el.closest('#respond-radar-widget, #radar-dom-scan-modal, #radar-flash-hud')) return false;
     if (el.closest('[data-pw="btn-collaborators"], [data-pendo*="collaborat"], [aria-label*="colabora"]')) return false;
@@ -1403,7 +1279,6 @@ async function openAssigneeMenu() {
     document.activeElement.blur();
   }
 
-  // 1. Selector directo Respond.io (100% verificado en respond_dump.html):
   const primaryTrigger = document.querySelector('[data-pendo="messages-assignment"] button[role="combobox"], [data-pendo="messages-assignment"] button, button[data-pendo="messages-assignment"]');
   if (primaryTrigger) {
     clickElementByCoordinates(primaryTrigger);
@@ -1413,7 +1288,6 @@ async function openAssigneeMenu() {
     if (findAsignarAMiMenuItem()) return true;
   }
 
-  // 2. Elementos detectados en findHeaderAssigneeElements (que NUNCA tocan colaboradores)
   const candidates = findHeaderAssigneeElements();
 
   for (const el of candidates) {
@@ -1427,7 +1301,6 @@ async function openAssigneeMenu() {
     if (findAsignarAMiMenuItem()) return true;
   }
 
-  // 3. Fallback: buscar botones combobox en la cabecera (EXCLUYENDO ESTRICTAMENTE BOTONES DE COLABORADORES)
   const dropdownTriggers = Array.from(document.querySelectorAll('button[role="combobox"], [data-pendo*="assignment"] button')).filter(b => {
     if (b.closest('[data-pw="btn-collaborators"], [data-pendo*="collaborat"], [aria-label*="colabora"]')) return false;
     if (b.querySelector('.icon-people, .icon-user-add')) return false;
@@ -1450,11 +1323,9 @@ async function openAssigneeMenu() {
 }
 
 function findAsignarAMiMenuItem() {
-  // 1. Selector exacto directo basado en el DOM de Radix Vue de Respond.io (verificado en respond_dump.html y logs)
   const direct = document.querySelector('[role="option"][label="Asignar a mí"], [role="option"][label*="Asignar a m" i], [role="option"][label*="Assign to me" i], [role="option"][label*="Daniela Tacuri" i], [data-radix-vue-collection-item][label="Asignar a mí"]');
   if (direct && isElementVisible(direct)) return direct;
 
-  // 2. Buscar opciones dentro del menú desplegable de Radix / Reka (EXCLUYENDO MENÚS AJENOS)
   const options = Array.from(document.querySelectorAll('[role="option"], [data-radix-vue-collection-item], [role="listbox"] div'));
 
   for (const opt of options) {
@@ -1487,9 +1358,7 @@ function findAsignarAMiMenuItem() {
   return null;
 }
 
-// Ejecutar asignación automática flash de la conversación al usuario ("Asignar a mí")
 async function assignConversationToMe() {
-  // 1. Si ya está la opción montada, clickearla inmediatamente
   let item = findAsignarAMiMenuItem();
   if (item) {
     clickElementByCoordinates(item);
@@ -1498,10 +1367,8 @@ async function assignConversationToMe() {
     return true;
   }
 
-  // 2. Abrir menú de Cesionario
   await openAssigneeMenu();
 
-  // 3. Esperar ultra-rápido a que monte el dropdown si hiciera falta (polling cada 12ms con yield)
   for (let attempt = 0; attempt < 35; attempt++) {
     item = findAsignarAMiMenuItem();
     if (item) {
@@ -1510,7 +1377,6 @@ async function assignConversationToMe() {
       if (typeof item.click === 'function') item.click();
       return true;
     }
-    // Reintentar abrir en intento 6 si aún no apareció
     if (attempt === 6) {
       await openAssigneeMenu();
     }
@@ -1521,7 +1387,6 @@ async function assignConversationToMe() {
 }
 
 function getOpenChatAssigneeStatus() {
-  // 1. Localizar el contenedor oficial de asignación de la conversación activa
   const assignmentContainer = document.querySelector('[data-pendo="messages-assignment"]');
   const triggerEl = assignmentContainer ? (
     assignmentContainer.querySelector('[variant="trigger"][label]') ||
@@ -1533,18 +1398,12 @@ function getOpenChatAssigneeStatus() {
   const rawAssignText = (assignmentContainer?.innerText || '').trim();
   const fullAssigneeText = `${label} ${truncText} ${rawAssignText}`.toLowerCase();
 
-  // Selector específico del encabezado de la conversación activa (NUNCA main header para evitar leer las pestañas del navegador)
   const chatHeader = document.querySelector('[data-pw="conversation-header"], [class*="conversation-view"] header, [class*="chat-header"], [class*="conversation-header"]');
   const chatHeaderText = (chatHeader?.innerText || '').toLowerCase();
 
-  // -------------------------------------------------------------------------
-  // PASO 1 (MÁXIMA PRIORIDAD): COMPROBACIÓN DIRECTA DE "SIN ASIGNAR" Y "SALES AGENT"
-  // Si la píldora de cesionario dice explícitamente "Unassigned", el lead NO es de nadie.
-  // -------------------------------------------------------------------------
   const hasBotIcon = !!assignmentContainer?.querySelector('.icon-custom-user-square-bold, [class*="custom-user"]');
   const earlyTakeover = findAsumirButton();
 
-  // A. Sin Asignar explícito (en inglés o español)
   if (
     fullAssigneeText.includes('sin asignar') ||
     fullAssigneeText.includes('unassigned') ||
@@ -1555,7 +1414,6 @@ function getOpenChatAssigneeStatus() {
     return { isAllowed: true, isUnassigned: true, isSalesAgent: false, isOtherHuman: false, name: 'Sin asignar' };
   }
 
-  // B. Sales Agent o Bot activo (con botón Asumir / Takeover disponible)
   if (
     fullAssigneeText.includes('sales agent') ||
     fullAssigneeText.includes('sales_agent') ||
@@ -1566,13 +1424,6 @@ function getOpenChatAssigneeStatus() {
     return { isAllowed: true, isSalesAgent: true, isUnassigned: false, isOtherHuman: false, name: 'Sales agent' };
   }
 
-  // -------------------------------------------------------------------------
-  // PASO 2: FILTRO DE SEGURIDAD ESTRICTA EN EL CESIONARIO REAL
-  // Solo se evalúa si NO es "Sin Asignar" ni "Sales Agent".
-  // NUNCA buscar en el encabezado global para no leer el perfil de Daniela.
-  // -------------------------------------------------------------------------
-
-  // A. Daniela Tacuri (Ya nos pertenece en esta cuenta)
   if (
     fullAssigneeText.includes('daniela tacuri') ||
     (fullAssigneeText.includes('daniela') && !fullAssigneeText.includes('moya'))
@@ -1580,7 +1431,6 @@ function getOpenChatAssigneeStatus() {
     return { isAllowed: false, isMine: true, isOtherHuman: false, isSalesAgent: false, isUnassigned: false, name: 'Daniela Tacuri' };
   }
 
-  // B. Diego Tacuri (Pertenece a Diego - ESTRICTAMENTE PROHIBIDO TOCAR)
   if (
     fullAssigneeText.includes('diego tacuri') ||
     fullAssigneeText.includes('diego tacu') ||
@@ -1592,26 +1442,22 @@ function getOpenChatAssigneeStatus() {
     return { isAllowed: false, isMine: false, isOtherHuman: true, isSalesAgent: false, isUnassigned: false, name: 'Diego Tacuri' };
   }
 
-  // C. Compañeros del equipo humano
   if (typeof isTeammateName === 'function' && isTeammateName(fullAssigneeText)) {
     console.log(`🛡️ [FlashApartador] Chat asignado a compañero ("${fullAssigneeText}") detectado en cesionario. RECHAZADO.`);
     return { isAllowed: false, isOtherHuman: true, isUnassigned: false, isSalesAgent: false, name: fullAssigneeText };
   }
 
-  // D. Asesor humano con nombre en el label (que no sea unassigned ni bot)
   if (label.length >= 2 && !label.toLowerCase().includes('agent') && !label.toLowerCase().includes('asignar') && !label.toLowerCase().includes('sales') && !label.toLowerCase().includes('unassigned')) {
     console.log(`🛡️ [FlashApartador] Chat asignado a asesor humano "${label}". RECHAZADO.`);
     return { isAllowed: false, isOtherHuman: true, isUnassigned: false, isSalesAgent: false, name: label };
   }
 
-  // E. Avatar humano en el contenedor de asignación
   const hasHumanAvatarImg = !!assignmentContainer?.querySelector('img[src*="avatar"], img[src*="googleusercontent"]');
   if (hasHumanAvatarImg && !hasBotIcon && !fullAssigneeText.includes('sales') && !fullAssigneeText.includes('agent')) {
     console.log('🛡️ [FlashApartador] Avatar humano de compañero detectado en asignación. RECHAZADO.');
     return { isAllowed: false, isOtherHuman: true, isUnassigned: false, isSalesAgent: false, name: 'Asesor Humano' };
   }
 
-  // Menú desplegable abierto con selección de compañero
   const checkedOption = document.querySelector('[role="option"][aria-selected="true"], [role="option"][data-state="checked"]');
   if (checkedOption) {
     const optLabel = (checkedOption.getAttribute('label') || checkedOption.innerText || '').toLowerCase().trim();
@@ -1621,29 +1467,20 @@ function getOpenChatAssigneeStatus() {
     }
   }
 
-  // -------------------------------------------------------------------------
-  // PASO 3: DEFAULT DE MÁXIMA SEGURIDAD (FAIL-SAFE)
-  // -------------------------------------------------------------------------
   console.log('🛡️ [FlashApartador] Cabecera no confirmada como "Sin asignar" ni "Sales agent". Omitido por seguridad.');
   return { isAllowed: false, isOtherHuman: true, isUnassigned: false, name: 'Asignado a tercero' };
 }
-
-// -------------------------------------------------------------------------
-// Apertura y Navegación Suave SPA (Sin Recargar la Página)
-// -------------------------------------------------------------------------
 
 function openInboxCard(cardEl) {
   if (!cardEl) return false;
   const linkEl = cardEl.matches('a[href*="/inbox/"]') ? cardEl : (cardEl.closest('a[href*="/inbox/"]') || cardEl.querySelector('a[href*="/inbox/"]'));
   const innerClickable = cardEl.querySelector('[data-pw="link-convo-item"]') || cardEl;
 
-  // 1. Simulación completa de MouseEvent / PointerEvent directo en los elementos del chat
   triggerPointerClick(innerClickable);
   if (linkEl && linkEl !== innerClickable) {
     triggerPointerClick(linkEl);
   }
 
-  // 2. Click nativo directo sobre la tarjeta y el link (sin depender de coordenadas en pantalla)
   if (typeof innerClickable.click === 'function') innerClickable.click();
   if (linkEl && typeof linkEl.click === 'function') linkEl.click();
 
@@ -1654,7 +1491,6 @@ async function performSmoothNavigation(conversationId, targetUrl) {
   const cIdStr = String(conversationId || '');
   console.log(`🚀 [RespondRadar] Solicitud de navegación suave SPA: ${cIdStr || targetUrl}`);
 
-  // 1. Primer intento: Si la tarjeta ya existe en el DOM del inbox (barra lateral izquierda)
   if (cIdStr) {
     const rawCards = Array.from(document.querySelectorAll('a.conversation-list--item, [data-pw="link-convo-item"], a[href*="/inbox/"]'));
     const card = rawCards.find(c => {
@@ -1669,7 +1505,6 @@ async function performSmoothNavigation(conversationId, targetUrl) {
     }
   }
 
-  // 2. Segundo intento: Disparar evento a page_bridge.js (MAIN WORLD) para navegar vía Vue Router
   const bridgePromise = new Promise((resolve) => {
     let resolved = false;
     const timeout = setTimeout(() => {
@@ -1698,7 +1533,7 @@ async function performSmoothNavigation(conversationId, targetUrl) {
   const bridgeOk = await bridgePromise;
   if (bridgeOk) {
     console.log(`✨ [RespondRadar] Navegación completada vía Bridge Vue Router.`);
-    // Opcional: verificar si la tarjeta apareció tras 150ms para seleccionarla en el sidebar
+
     setTimeout(() => {
       if (cIdStr) {
         const rawCards = Array.from(document.querySelectorAll('a.conversation-list--item, [data-pw="link-convo-item"], a[href*="/inbox/"]'));
@@ -1712,7 +1547,6 @@ async function performSmoothNavigation(conversationId, targetUrl) {
     return true;
   }
 
-  // 3. Tercer intento: History API en el content script como respaldo
   try {
     const path = targetUrl && targetUrl.startsWith('http') ? new URL(targetUrl).pathname : targetUrl;
     if (path && window.location.pathname !== path) {
