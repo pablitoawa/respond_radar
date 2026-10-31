@@ -2,14 +2,14 @@
 
 Extensión autónoma e independiente para Google Chrome diseñada para asesores en **Respond.io**. Permite gestionar leads, etapas de cierre, fechas de cobro, contabilidad de ventas, comisiones personales y auto-apartador flash en tiempo real sin requerir servidores locales ni dependencias externas.
 
-## 🚀 Instalación Rápida
+##  Instalación Rápida
 1. Descarga o clona este repositorio en tu computadora.
 2. Abre Google Chrome y ve a `chrome://extensions/`.
 3. Activa la casilla **"Modo de desarrollador"** (arriba a la derecha).
 4. Haz clic en el botón **"Cargar descomprimida"**.
 5. Selecciona esta carpeta (`RespondRadar_Standalone`).
 
-## ⚡ Características Principales
+##  Características Principales
 - **Auto-Apartador Flash ("King"):** Detección en tiempo real de palabras clave de campaña (`KING`, `REY`, `SECRETO`) y toma inmediata del chat con envío automático del saludo inicial configurado.
 - **Botón Apagar Bot (Bot Off):** Silencia o apaga el bot de Respond.io en el chat activo con un solo clic.
 - **Cierre & Etapas (100% Local):**
